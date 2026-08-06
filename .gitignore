@@ -46,5 +46,6 @@ server/generated/prisma
 node_modules
 
 client/src/trash.tsx
+client/inventory-app-feature-checklist.md
 
 server/src/middleware/trash.ts
