@@ -17,7 +17,7 @@ node_modules/
 dist/
 dist-ssr/
 client/build/
-
+server/dist/  
 # Env files
 .env
 client/.env
@@ -28,15 +28,18 @@ server/.env
 server/.env.local
 server/.env.development
 server/.env.production
-
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 # generated-prisma files
 server/generated
 server/generated/prisma
-
+/src/generated/prisma   
 # Editor directories and files
 .vscode/
 !.vscode/extensions.json
-.idea/
+!.vscode/settings.json   !.vscode/tasks.json      !.vscode/launch.json     .idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -45,7 +48,39 @@ server/generated/prisma
 *.sw?
 node_modules
 
+# IDE - VSCode (spezifisch für server)
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace      
 client/src/trash.tsx
 client/inventory-app-feature-checklist.md
 
-server/src/middleware/trash.ts
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+server/.DS_Store
+
+# Tests
+coverage
+server/coverage
+server/.nyc_output
+.nyc_output              
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+server/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Temp directories
+.temp
+.tmp
+server/temp
+
+# Server specific
+server/src/middleware/trash.ts     
