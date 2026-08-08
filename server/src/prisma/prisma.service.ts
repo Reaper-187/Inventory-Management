@@ -19,7 +19,6 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  ss;
   constructor() {
     // Dieser Adapter verbindet Prisma mit dem PostgreSQL Treiber.
     const adapter = new PrismaPg({
