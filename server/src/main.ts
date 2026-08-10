@@ -17,6 +17,7 @@ async function startServer() {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidUnknownValues: true }),
   );
+  app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 5000);
 }
 startServer();

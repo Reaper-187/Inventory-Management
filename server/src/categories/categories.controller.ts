@@ -17,25 +17,25 @@ export class CategoriesController {
   // readonly /* der Wert kann nach dem Constructor nicht mehr neu zugewiesen werden */
   constructor(private readonly categoriesService: CategoriesService) {} // Dep Injection nets gibt dem controller eine fetrige instanz des service.
 
-  @Get()
+  @Get('fetch-categories')
   findAllCategories() {
     const data = this.categoriesService.findAll();
     return data;
   }
-  @Get(':id')
+  @Get('fetch-one-category/:id')
   findOneCategory(@Param('id') id: string) {
     const data = this.categoriesService.findOneCat(id);
     return data;
   }
-  @Post()
+  @Post('create-category')
   createCategory(@Body() createCatDto: CreateCatDto) {
     return this.categoriesService.createCategory(createCatDto);
   }
-  @Put(':id')
+  @Put('update-category/:id')
   updateCategory(@Param('id') id: string, @Body() updateCatDto: UpdateCatDto) {
     return this.categoriesService.updateCategory(id, updateCatDto);
   }
-  @Delete(':id')
+  @Delete('delete-category/:id')
   deleteCategory(@Param('id') id: string) {
     return this.categoriesService.deleteCategory(id);
   }
