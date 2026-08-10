@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { ValidationPipe } from '@nestjs/common';
 
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
@@ -13,6 +14,9 @@ async function startServer() {
     origin: FRONTEND_URL ? [FRONTEND_URL] : true,
     credentials: true,
   });
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidUnknownValues: true }),
+  );
   await app.listen(process.env.PORT ?? 5000);
 }
 startServer();
