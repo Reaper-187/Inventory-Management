@@ -8,9 +8,6 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Node modules
-client/node_modules/
-server/node_modules/
-server/uploads/
 node_modules/
 
 # Build output (optional falls du baust)
@@ -39,7 +36,10 @@ server/generated/prisma
 # Editor directories and files
 .vscode/
 !.vscode/extensions.json
-!.vscode/settings.json   !.vscode/tasks.json      !.vscode/launch.json     .idea/
+!.vscode/settings.json   
+!.vscode/tasks.json      
+!.vscode/launch.json     
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -83,4 +83,4 @@ server/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 server/temp
 
 # Server specific
-server/src/middleware/trash.ts
+server/trash.ts
