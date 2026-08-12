@@ -28,10 +28,14 @@ export const createCategories = async (data: CreateCat): Promise<Category> => {
   return response.data;
 };
 
-export const updateCategories = async (data: UpdateCat): Promise<Category> => {
-  const response = await axios.put<Category>(`${UPDATE_CATEGORY_API}/:id`, {
+export const updateCategories = async (
+  id: string,
+  data: UpdateCat,
+): Promise<Category> => {
+  const response = await axios.put<Category>(
+    `${UPDATE_CATEGORY_API}/${id}`,
     data,
-  });
+  );
   return response.data;
 };
 

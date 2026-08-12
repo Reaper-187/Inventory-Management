@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,51 +8,48 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { categorySchema } from "../../types/category.api.types";
-import type z from "zod";
 import { useCreateCategory } from "../../hooks/useCreateCategory";
 import { useUpdateCategory } from "../../hooks/useUpdateCategory";
 import { useGetOneCategory } from "../../hooks/useGetOneCategory";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import type z from "zod";
 
-type CategoryFormValues = z.infer<typeof categorySchema>;
+type CategoryCreateFormValues = z.infer<typeof categorySchema>;
+type DialogType =
+  | { mode: "create"; open: boolean; onOpenChange: (open: boolean) => void }
+  | {
+      mode: "edit";
+      catId: string;
+      open: boolean;
+      onOpenChange: (open: boolean) => void;
+    };
 
-interface DialogType {
-  mode: "create" | "edit";
-  catId?: string;
-  categoryName?: string;
-}
+export function CategoryDialog(props: DialogType) {
+  const { mode, open, onOpenChange } = props;
+  const catId = mode === "edit" ? props.catId : undefined;
 
-export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
   const { mutate: createNewCat, isPending: createPending } =
     useCreateCategory();
-
-  const { mutate: updateCat, isPending: updatePending } = useUpdateCategory();
-
+  const { mutate: updateMutate, isPending: updatePending } =
+    useUpdateCategory();
   const { data: initialfetchData, isPending: fetchCatPending } =
     useGetOneCategory(catId);
-
-  const [open, setOpen] = useState(false);
 
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CategoryFormValues>({
+  } = useForm<CategoryCreateFormValues>({
     resolver: zodResolver(categorySchema),
-    defaultValues: {
-      name: "",
-      description: "",
-    },
+    defaultValues: { name: "", description: "" },
   });
 
   useEffect(() => {
@@ -63,32 +61,36 @@ export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
     }
   }, [initialfetchData, mode, reset]);
 
-  const submitType = mode === "create" ? createNewCat : updateCat;
   const pendingType = mode === "create" ? createPending : updatePending;
 
-  const onSubmit = (formData: CategoryFormValues) => {
-    submitType(formData, {
-      onSuccess: () => {
-        reset();
-        setOpen(false);
-      },
-    });
+  const onSubmit = (formData: CategoryCreateFormValues) => {
+    {
+      mode === "create"
+        ? createNewCat(formData, {
+            onSuccess: () => {
+              reset();
+              onOpenChange(false);
+            },
+          })
+        : updateMutate(
+            { id: catId as string, data: formData },
+            {
+              onSuccess: () => {
+                reset();
+                onOpenChange(false);
+              },
+            },
+          );
+    }
   };
 
   if (mode === "edit" && fetchCatPending) {
-    return <p>Kategorie wird geladen...</p>;
+    return null;
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <form id="category-form" onSubmit={handleSubmit(onSubmit)}>
-        <DialogTrigger
-          render={
-            <Button variant="outline" className="w-full mb-1">
-              {mode === "create" ? "create Category" : categoryName}
-            </Button>
-          }
-        />
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>
@@ -116,7 +118,6 @@ export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
                     {...field}
                     className={errors.name ? "border-destructive" : ""}
                   />
-
                   {errors.name && (
                     <p className="text-sm text-destructive">
                       {errors.name.message}
@@ -130,7 +131,7 @@ export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
               control={control}
               render={({ field }) => (
                 <Field>
-                  <Label htmlFor="username-1">Beschreibung</Label>
+                  <Label htmlFor="description">Beschreibung</Label>
                   <div className="space-y-1">
                     <Textarea
                       id="description"
@@ -143,7 +144,6 @@ export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
                           : "min-h-[100px] resize-y"
                       }
                     />
-
                     {errors.description && (
                       <p className="text-sm text-destructive">
                         {errors.description.message}
@@ -156,9 +156,6 @@ export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
           </FieldGroup>
           <DialogFooter>
             <div className="flex justify-between w-full">
-              <Button variant="destructive" disabled={pendingType}>
-                Löschen
-              </Button>
               <DialogClose
                 render={
                   <Button
@@ -170,7 +167,6 @@ export function CategoryDialog({ mode, categoryName, catId }: DialogType) {
                   </Button>
                 }
               />
-
               <Button type="submit" form="category-form" disabled={pendingType}>
                 {pendingType ? (
                   <>
