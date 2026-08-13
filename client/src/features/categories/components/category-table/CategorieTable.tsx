@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetCategories } from "../../hooks/useGetCategories";
-import { CategoryDialog } from "../category-modal/CategoryDialog";
+import { CategoryDialog } from "../form/CategoryDialog";
 import { DeleteAlert } from "../category-modal/DeleteAlert";
 import { useState } from "react";
 import { Edit, MoreHorizontalIcon, Trash2 } from "lucide-react";

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useGetCategories } from "../../hooks/useGetCategories";
 import { Spinner } from "@/components/ui/spinner";
-import { CategoryDialog } from "../category-modal/CategoryDialog";
+import { CategoryDialog } from "../form/CategoryDialog";
 
 export const CategorieDropdown = () => {
   const { data: categories, isPending } = useGetCategories();
