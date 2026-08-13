@@ -12,7 +12,7 @@ import { useGetCategories } from "../../hooks/useGetCategories";
 import { Spinner } from "@/components/ui/spinner";
 import { CategoryDialog } from "../category-modal/CategoryDialog";
 
-export const Dropdown = () => {
+export const CategorieDropdown = () => {
   const { data: categories, isPending } = useGetCategories();
   const [createOpen, setCreateOpen] = useState(false);
 

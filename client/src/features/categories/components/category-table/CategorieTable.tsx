@@ -14,13 +14,12 @@ import { Edit, MoreHorizontalIcon, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-export function CategorieList() {
+export function CategorieTable() {
   const { data: categories, isPending } = useGetCategories();
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
   const [deleteCatId, setDeleteCatId] = useState<string | null>(null);

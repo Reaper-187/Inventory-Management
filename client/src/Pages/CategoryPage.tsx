@@ -1,9 +1,9 @@
-import { CategorieList } from "@/features/categories/components/categorie-list/CategorieList";
+import { CategorieTable } from "@/features/categories";
 
 export const CategoryPage = () => {
   return (
     <>
-      <CategorieList />
+      <CategorieTable />
     </>
   );
 };
