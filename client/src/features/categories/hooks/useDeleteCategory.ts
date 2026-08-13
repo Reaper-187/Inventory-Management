@@ -3,8 +3,14 @@ import { deleteCategories } from "../api/categoriesApi";
 
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: deleteCategories,
-    onSuccess: () => queryClient.cancelQueries({ queryKey: ["categories"] }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
+    },
   });
 };

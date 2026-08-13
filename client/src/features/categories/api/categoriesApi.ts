@@ -39,7 +39,7 @@ export const updateCategories = async (
   return response.data;
 };
 
-export const deleteCategories = async () => {
-  const response = await axios.delete<any>(`${DELETE_CATEGORY_API}/:id`, {});
+export const deleteCategories = async (id: string): Promise<string> => {
+  const response = await axios.delete<string>(`${DELETE_CATEGORY_API}/${id}`);
   return response.data;
 };
