@@ -22,3 +22,16 @@ model Category {
 
   @@map("categories")
 }
+
+model Supplier {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String   @unique @db.VarChar(50)
+  contactPerson String?  @db.VarChar(50)
+  email         String   @unique @db.VarChar(30)
+  phone         String?  @db.VarChar(30)
+  address       String?  @db.VarChar(50)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("suppliers")
+}
