@@ -8,23 +8,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useDeleteCategory } from "../../hooks/useDeleteCategory";
 
 interface DeleteAlertProps {
   id: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDelete: (id: string, options: { onSuccess: () => void }) => void;
+  isPending: boolean;
 }
 
-export function DeleteAlert({ id, open, onOpenChange }: DeleteAlertProps) {
-  const { mutate, isPending } = useDeleteCategory();
-
-  const handleSubmit = (id: string) => {
-    mutate(id, {
-      onSuccess: () => {
-        onOpenChange(false);
-      },
-    });
+export function DeleteAlert({
+  id,
+  open,
+  onOpenChange,
+  onDelete,
+  isPending,
+}: DeleteAlertProps) {
+  const handleSubmit = () => {
+    onDelete(id, { onSuccess: () => onOpenChange(false) });
   };
 
   return (
@@ -32,19 +33,15 @@ export function DeleteAlert({ id, open, onOpenChange }: DeleteAlertProps) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription className="text-destructive">
-            This action cannot be undone. This will permanently delete your
-            account from our servers.
+          <AlertDialogDescription>
+            This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>
             {isPending ? "wird bearbeitet" : "Cancel"}
           </AlertDialogCancel>
-          <AlertDialogAction
-            variant="destructive"
-            onClick={() => handleSubmit(id)}
-          >
+          <AlertDialogAction onClick={handleSubmit}>
             {isPending ? "loading" : "Continue"}
           </AlertDialogAction>
         </AlertDialogFooter>

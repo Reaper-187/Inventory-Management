@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -6,20 +7,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetCategories } from "../../hooks/useGetCategories";
-import { CategoryDialog } from "../form/CategoryDialog";
-import { DeleteAlert } from "../category-modal/DeleteAlert";
-import { useState } from "react";
-import { Edit, MoreHorizontalIcon, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Edit, MoreHorizontalIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useGetCategories } from "../../hooks/useGetCategories";
+import { CategoryDialog } from "../form/CategoryDialog";
+import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
+import { useDeleteCategory } from "../../hooks/useDeleteCategory";
 
 export function CategorieTable() {
+  const { mutate: deleteMutation, isPending: isDeleteing } =
+    useDeleteCategory();
   const { data: categories, isPending } = useGetCategories();
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
   const [deleteCatId, setDeleteCatId] = useState<string | null>(null);
@@ -85,6 +88,8 @@ export function CategorieTable() {
           id={deleteCatId}
           open={!!deleteCatId}
           onOpenChange={(open) => !open && setDeleteCatId(null)}
+          isPending={isDeleteing}
+          onDelete={deleteMutation}
         />
       )}
       {editingCatId && (
