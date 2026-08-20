@@ -13,12 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, MoreHorizontalIcon, Trash2 } from "lucide-react";
+import { Edit, Info, MoreHorizontalIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
 import { useDeleteSupplier } from "../../hooks/useDeleteSupplier";
 import { useGetSuppliers } from "../../hooks/useGetSupplier";
 import { SupplierDialog } from "../form/SupplierDialog";
+import { SuppInfoModal } from "../modal-comp/SuppInfoModal";
 
 export function SupplierTable() {
   const { mutate: deleteSuppMutation, isPending: isDeleteing } =
@@ -26,7 +27,7 @@ export function SupplierTable() {
   const { data: suppliers, isPending } = useGetSuppliers();
   const [editingSupId, setEditingSupId] = useState<string | null>(null);
   const [deleteSupId, setDeleteSupId] = useState<string | null>(null);
-
+  const [infoSuppId, setInfoSuppId] = useState<string | null>(null);
   return (
     <>
       <Table>
@@ -79,6 +80,16 @@ export function SupplierTable() {
                     >
                       <Trash2 color="red" size={15} />
                     </Button>
+                    <DropdownMenuSeparator />
+
+                    <Button
+                      className="w-full flex justify-self-center"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setInfoSuppId(supplier.id)}
+                    >
+                      <Info size={15} />
+                    </Button>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -102,6 +113,14 @@ export function SupplierTable() {
           suppId={editingSupId}
           open={true}
           onOpenChange={(open) => !open && setEditingSupId(null)}
+        />
+      )}
+
+      {infoSuppId && (
+        <SuppInfoModal
+          supId={infoSuppId}
+          open={!!infoSuppId}
+          onOpenChange={(open) => !open && setInfoSuppId(null)}
         />
       )}
     </>
