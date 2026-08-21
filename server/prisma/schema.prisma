@@ -14,24 +14,48 @@ datasource db {
 }
 
 model Category {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String   @unique @db.VarChar(50)
-  description String?  @db.VarChar(255)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String    @unique @db.VarChar(50)
+  description String?   @db.VarChar(255)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  product     Product[]
 
   @@map("categories")
 }
 
 model Supplier {
-  id            String   @id @default(uuid()) @db.Uuid
-  name          String   @unique @db.VarChar(50)
-  contactPerson String?  @db.VarChar(50)
-  email         String   @unique @db.VarChar(30)
-  phone         String?  @db.VarChar(30)
-  address       String?  @db.VarChar(50)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String    @unique @db.VarChar(50)
+  contactPerson String?   @db.VarChar(50)
+  email         String    @unique @db.VarChar(30)
+  phone         String?   @db.VarChar(30)
+  address       String?   @db.VarChar(50)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  product       Product[]
 
   @@map("suppliers")
+}
+
+model Product {
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String  @db.VarChar(100)
+  sku          String  @unique @db.VarChar(50)
+  description  String? @db.VarChar(500)
+  price        Decimal @db.Decimal(10, 2)
+  imageUrl     String? @db.VarChar(500)
+  minStock     Int     @default(0)
+  currentStock Int     @default(0)
+
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  supplierId String   @db.Uuid
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
 }
