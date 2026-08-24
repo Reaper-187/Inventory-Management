@@ -8,6 +8,7 @@ import { CreateProductDto } from '../dtos/create-product.dto.js';
 import { UpdateProductDto } from '../dtos/update-product.dto.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { Prisma, Product } from '../../generated/prisma/client.js';
+import { buildSkuCandidate, buildSkuPrefix } from '../utils/sku.utils.js';
 
 @Injectable()
 export class ProductsService {
@@ -36,16 +37,50 @@ export class ProductsService {
     return prodInDb;
   }
 
+  private async generateUniqueSku(categoryId: string): Promise<string> {
+    const category = await this.prisma.category.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      throw new BadRequestException(
+        'Invalid categoryId: category does not exist',
+      );
+    }
+
+    const prefix = buildSkuPrefix(category.name);
+
+    let sku: string;
+    let exists = true;
+
+    do {
+      sku = buildSkuCandidate(prefix);
+      const existing = await this.prisma.product.findUnique({ where: { sku } });
+      exists = !!existing;
+    } while (exists);
+
+    return sku;
+  }
+
   async create(createProductDto: CreateProductDto): Promise<Product> {
+    const sku = await this.generateUniqueSku(createProductDto.categoryId);
+
     try {
       return await this.prisma.product.create({
-        data: createProductDto,
+        data: {
+          ...createProductDto,
+          sku,
+        },
+        include: {
+          category: true,
+          supplier: true,
+        },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new ConflictException(
-            `Product with SKU '${createProductDto.sku}' already exists`,
+            `Product with SKU '${sku}' already exists`,
           );
         }
         if (error.code === 'P2003') {
@@ -64,30 +99,14 @@ export class ProductsService {
   ): Promise<Product> {
     await this.findOne(id);
 
-    try {
-      return await this.prisma.product.update({
-        where: { id },
-        data: updateProductDto,
-        include: {
-          category: true,
-          supplier: true,
-        },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException(
-            `Product with SKU '${updateProductDto.sku}' already exists`,
-          );
-        }
-        if (error.code === 'P2003') {
-          throw new BadRequestException(
-            'Invalid categoryId or supplierId – referenced entity does not exist',
-          );
-        }
-      }
-      throw error;
-    }
+    return await this.prisma.product.update({
+      where: { id },
+      data: updateProductDto,
+      include: {
+        category: true,
+        supplier: true,
+      },
+    });
   }
 
   async remove(id: string): Promise<Product> {

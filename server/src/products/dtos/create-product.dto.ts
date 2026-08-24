@@ -16,11 +16,6 @@ export class CreateProductDto {
   @MaxLength(100)
   name: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(50)
-  sku: string;
-
   @IsOptional()
   @IsString()
   @MaxLength(500)
