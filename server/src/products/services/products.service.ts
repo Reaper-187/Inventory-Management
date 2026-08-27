@@ -9,6 +9,8 @@ import { UpdateProductDto } from '../dtos/update-product.dto.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { Prisma, Product } from '../../generated/prisma/client.js';
 import { buildSkuCandidate, buildSkuPrefix } from '../utils/sku.utils.js';
+import { join } from 'node:path';
+import { unlink } from 'node:fs/promises';
 
 @Injectable()
 export class ProductsService {
@@ -102,6 +104,30 @@ export class ProductsService {
     return await this.prisma.product.update({
       where: { id },
       data: updateProductDto,
+      include: {
+        category: true,
+        supplier: true,
+      },
+    });
+  }
+
+  async uploadImage(id: string, file: Express.Multer.File): Promise<Product> {
+    const product = await this.findOne(id);
+
+    if (product.imageUrl) {
+      const oldPath = join(process.cwd(), product.imageUrl);
+      try {
+        await unlink(oldPath);
+      } catch (error) {
+        console.warn(`Could not delete old image at ${oldPath}:`, error);
+      }
+    }
+
+    const imageUrl = `/uploads/products/${file.filename}`;
+
+    return await this.prisma.product.update({
+      where: { id },
+      data: { imageUrl },
       include: {
         category: true,
         supplier: true,
