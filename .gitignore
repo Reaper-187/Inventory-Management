@@ -84,3 +84,5 @@ server/temp
 
 # Server specific
 server/trash.ts
+uploads/**/*
+!uploads/**/.gitkeep

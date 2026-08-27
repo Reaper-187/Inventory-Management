@@ -111,17 +111,19 @@ export class ProductsService {
     });
   }
 
+  private async deleteImageFile(imageUrl: string): Promise<void> {
+    const imagePath = join(process.cwd(), imageUrl);
+    try {
+      await unlink(imagePath);
+    } catch (error) {
+      console.warn(`Could not delete image at ${imagePath}:`, error);
+    }
+  }
+
   async uploadImage(id: string, file: Express.Multer.File): Promise<Product> {
     const product = await this.findOne(id);
 
-    if (product.imageUrl) {
-      const oldPath = join(process.cwd(), product.imageUrl);
-      try {
-        await unlink(oldPath);
-      } catch (error) {
-        console.warn(`Could not delete old image at ${oldPath}:`, error);
-      }
-    }
+    if (product.imageUrl) await this.deleteImageFile(product.imageUrl);
 
     const imageUrl = `/uploads/products/${file.filename}`;
 
@@ -136,7 +138,9 @@ export class ProductsService {
   }
 
   async remove(id: string): Promise<Product> {
-    await this.findOne(id);
+    const product = await this.findOne(id);
+
+    if (product.imageUrl) await this.deleteImageFile(product.imageUrl);
 
     return await this.prisma.product.delete({
       where: { id },
