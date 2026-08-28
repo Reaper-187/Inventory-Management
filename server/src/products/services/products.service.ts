@@ -11,18 +11,63 @@ import { Prisma, Product } from '../../generated/prisma/client.js';
 import { buildSkuCandidate, buildSkuPrefix } from '../utils/sku.utils.js';
 import { join } from 'node:path';
 import { unlink } from 'node:fs/promises';
+import { QueryProductDto } from '../dtos/query-product.dto.js';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Product[]> {
-    return await this.prisma.product.findMany({
-      include: {
-        category: true,
-        supplier: true,
-      },
+  async findAll(query: QueryProductDto) {
+    const { search, categoryId, supplierId, lowStock, page, limit } = query;
+
+    const where: Prisma.ProductWhereInput = {};
+
+    if (search) {
+      where.name = { contains: search, mode: 'insensitive' };
+    }
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+    if (supplierId) {
+      where.supplierId = supplierId;
+    }
+
+    if (!lowStock) {
+      const [data, total] = await Promise.all([
+        this.prisma.product.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          include: { category: true, supplier: true },
+          orderBy: { createdAt: 'desc' },
+        }),
+        this.prisma.product.count({ where }),
+      ]);
+
+      return {
+        data,
+        meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+      };
+    }
+
+    const allMatching = await this.prisma.product.findMany({
+      where,
+      include: { category: true, supplier: true },
+      orderBy: { createdAt: 'desc' },
     });
+
+    const lowStockProducts = allMatching.filter(
+      (p) => p.currentStock <= p.minStock,
+    );
+
+    const total = lowStockProducts.length;
+    const start = (page - 1) * limit;
+    const data = lowStockProducts.slice(start, start + limit);
+
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async findOne(id: string): Promise<Product> {

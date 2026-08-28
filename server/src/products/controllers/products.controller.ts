@@ -11,6 +11,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service.js';
 import { CreateProductDto } from '../dtos/create-product.dto.js';
@@ -19,13 +20,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
+import { QueryProductDto } from '../dtos/query-product.dto.js';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query() query: QueryProductDto) {
+    return this.productsService.findAll(query);
   }
 
   @Get(':id')
