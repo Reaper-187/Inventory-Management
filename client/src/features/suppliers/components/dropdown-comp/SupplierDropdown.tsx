@@ -68,7 +68,7 @@ export const SupplierDropdown = ({
   };
 
   return (
-    <div className="flex justify-between px-5">
+    <div className={`flex justify-between ${isMultipleMode ? "px-5" : ""}`}>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
@@ -91,7 +91,7 @@ export const SupplierDropdown = ({
 
           <Button
             variant="outline"
-            className="w-full"
+            className={isMultipleMode ? "w-full" : "hidden"}
             onClick={() => setCreateOpen(true)}
           >
             Create new Supplier
@@ -119,6 +119,7 @@ export const SupplierDropdown = ({
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+
       <SupplierDialog
         mode="create"
         open={createOpen}

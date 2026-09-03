@@ -68,7 +68,9 @@ export const CategorieDropdown = ({
   };
 
   return (
-    <div className="flex justify-between px-5">
+    <div
+      className={`${mode === "multiple" ? "flex justify-between px-5" : ""}`}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
@@ -91,7 +93,7 @@ export const CategorieDropdown = ({
 
           <Button
             variant="outline"
-            className="w-full"
+            className={isMultipleMode ? "w-full" : "hidden"}
             onClick={() => setCreateOpen(true)}
             disabled={disabled}
           >
