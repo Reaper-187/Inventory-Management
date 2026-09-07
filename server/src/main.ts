@@ -9,7 +9,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 async function startServer() {
   const app = await NestFactory.create(AppModule); //express.json() ist bereits active
   app.use(cookieParser());
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   app.enableCors({
     origin: FRONTEND_URL ? [FRONTEND_URL] : true,
     credentials: true,

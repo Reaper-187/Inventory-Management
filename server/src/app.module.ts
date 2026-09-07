@@ -10,7 +10,7 @@ import { join } from 'path';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'), // nav auf den physischen Folder
-      serveRoot: '/uploads', // unter welcher url-präfix die datei zu finden ist
+      serveRoot: '/api/uploads', // unter welcher url-präfix die datei zu finden ist
     }),
     PrismaModule,
     CategoriesModule,
