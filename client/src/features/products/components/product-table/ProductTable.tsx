@@ -13,12 +13,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, MoreHorizontalIcon, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontalIcon, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetProducts } from "../../hooks/useGetProducts";
 import { StockLevelBadge } from "./StockLevelBadge";
+import { ProductDialog } from "../form/ProductDialog";
+import { Spinner } from "@/components/ui/spinner";
+import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
+import { useDeleteProduct } from "../../hooks/useDeleteProduct";
+
+const IMG_BASE_URL = `${import.meta.env.VITE_API_STATIC}/api`;
 
 export const ProductTable = () => {
+  const { mutate: deleteMutation, isPending: isDeleteing } = useDeleteProduct();
+
+  const [createOpen, setCreateOpen] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -30,14 +39,27 @@ export const ProductTable = () => {
   const [deleteProdId, setDeleteProdId] = useState<string | null>(null);
 
   if (isPending) {
-    return <p>Loading products...</p>;
+    return (
+      <div className="flex justify-self-center items-center gap-3">
+        <p>Loading</p>
+        <Spinner />
+        <p>products..</p>
+      </div>
+    );
   }
 
   return (
     <>
+      <Button
+        className="flex justify-self-end"
+        onClick={() => setCreateOpen(true)}
+      >
+        create new Product
+      </Button>
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>SKU</TableHead>
             <TableHead>Category</TableHead>
@@ -49,6 +71,17 @@ export const ProductTable = () => {
         <TableBody>
           {products?.map((product) => (
             <TableRow key={product.id}>
+              <TableCell className="font-medium">
+                {product.imageUrl ? (
+                  <img
+                    className="w-[10%] border-1 border-black"
+                    src={`${IMG_BASE_URL}${product.imageUrl}`}
+                    alt="img"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gray-200"></div>
+                )}
+              </TableCell>
               <TableCell className="font-medium">{product.name}</TableCell>
               <TableCell>{product.sku}</TableCell>
               <TableCell>{product.category.name}</TableCell>
@@ -58,7 +91,7 @@ export const ProductTable = () => {
                   minStock={product.minStock}
                 />
               </TableCell>
-              <TableCell>{product.price.toFixed(2)} €</TableCell>
+              <TableCell>{product.price} €</TableCell>
 
               <TableCell className="cursor-pointer pl-6">
                 <DropdownMenu>
@@ -98,7 +131,7 @@ export const ProductTable = () => {
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between p-2">
         <span className="text-sm text-muted-foreground">
           Page {meta?.page} of {meta?.totalPages}
         </span>
@@ -121,6 +154,30 @@ export const ProductTable = () => {
           </Button>
         </div>
       </div>
+      <ProductDialog
+        mode="create"
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+      />
+
+      {editProdId && (
+        <ProductDialog
+          mode="edit"
+          productId={editProdId}
+          open={true}
+          onOpenChange={(open) => !open && setEditProdId(null)}
+        />
+      )}
+
+      {deleteProdId && (
+        <DeleteAlert
+          id={deleteProdId}
+          open={true}
+          onOpenChange={(open) => !open && setDeleteProdId(null)}
+          isPending={isDeleteing}
+          onDelete={deleteMutation}
+        />
+      )}
     </>
   );
 };

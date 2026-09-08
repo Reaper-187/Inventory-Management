@@ -32,6 +32,11 @@ const items = [
     url: "/supplires",
     icon: List,
   },
+  {
+    title: "Products",
+    url: "/products",
+    icon: List,
+  },
 ];
 
 export function AppSidebar() {
