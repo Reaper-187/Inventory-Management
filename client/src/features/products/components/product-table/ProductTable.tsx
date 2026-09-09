@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, MoreHorizontalIcon, Plus, Trash2 } from "lucide-react";
+import { Edit, Expand, MoreHorizontalIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetProducts } from "../../hooks/useGetProducts";
 import { StockLevelBadge } from "./StockLevelBadge";
@@ -21,6 +21,7 @@ import { ProductDialog } from "../form/ProductDialog";
 import { Spinner } from "@/components/ui/spinner";
 import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
 import { useDeleteProduct } from "../../hooks/useDeleteProduct";
+import { ImgModal } from "../modal/ImgModal";
 
 const IMG_BASE_URL = `${import.meta.env.VITE_API_STATIC}/api`;
 
@@ -37,6 +38,7 @@ export const ProductTable = () => {
 
   const [editProdId, setEditProdId] = useState<string | null>(null);
   const [deleteProdId, setDeleteProdId] = useState<string | null>(null);
+  const [productId, setProductId] = useState<string | undefined>(undefined);
 
   if (isPending) {
     return (
@@ -73,13 +75,30 @@ export const ProductTable = () => {
             <TableRow key={product.id}>
               <TableCell className="font-medium">
                 {product.imageUrl ? (
-                  <img
-                    className="w-[10%] border-1 border-black"
-                    src={`${IMG_BASE_URL}${product.imageUrl}`}
-                    alt="img"
-                  />
+                  <div
+                    className="relative w-12 h-12 md:w-20 md:h-20 cursor-pointer group"
+                    onClick={() => setProductId(product.id)}
+                  >
+                    <img
+                      className="w-12 h-12 md:w-20 md:h-20 border-1 border-black"
+                      src={`${IMG_BASE_URL}${product.imageUrl}`}
+                      alt="img"
+                    />
+                    <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                      <Expand
+                        className="
+                  text-primary
+                  ml-5
+                  w-3 h-3
+                  md:w-2.5 md:h-2.5
+                  md:group-hover:w-5 md:group-hover:h-5
+                  transition-all duration-200
+                "
+                      />
+                    </div>
+                  </div>
                 ) : (
-                  <div className="w-10 h-10 bg-gray-200"></div>
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-muted rounded" />
                 )}
               </TableCell>
               <TableCell className="font-medium">{product.name}</TableCell>
@@ -178,6 +197,8 @@ export const ProductTable = () => {
           onDelete={deleteMutation}
         />
       )}
+
+      <ImgModal productId={productId} setProductId={setProductId} />
     </>
   );
 };
