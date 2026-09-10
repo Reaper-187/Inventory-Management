@@ -17,12 +17,12 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CategorieDropdown } from "@/features/categories";
-import { SupplierDropdown } from "@/features/suppliers";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { clampNonNegativeNumber } from "../../utils/form.utils";
 import { useUploadProductImage } from "../../hooks/useUploadProdImage";
+import { CategorySelect } from "@/features/categories/components/category-select/CategorySelect";
+import { SupplierSelect } from "@/features/suppliers/components/supplier-select/SupplierSelect";
 
 type DialogType =
   | { mode: "create"; open: boolean; onOpenChange: (open: boolean) => void }
@@ -206,8 +206,7 @@ export const ProductDialog = (props: DialogType) => {
                 <Field>
                   <Label htmlFor="categoryId">Kategorie</Label>
 
-                  <CategorieDropdown
-                    mode="single"
+                  <CategorySelect
                     value={field.value}
                     onChange={field.onChange}
                     disabled={pendingType}
@@ -228,8 +227,7 @@ export const ProductDialog = (props: DialogType) => {
               render={({ field }) => (
                 <Field>
                   <Label htmlFor="supplierId">Lieferant</Label>
-                  <SupplierDropdown
-                    mode="single"
+                  <SupplierSelect
                     value={field.value}
                     onChange={field.onChange}
                     disabled={pendingType}
