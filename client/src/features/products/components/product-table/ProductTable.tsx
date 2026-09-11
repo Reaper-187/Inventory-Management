@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, Expand, MoreHorizontalIcon, Trash2 } from "lucide-react";
+import { Edit, Expand, Info, MoreHorizontalIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetProducts } from "../../hooks/useGetProducts";
 import { StockLevelBadge } from "./StockLevelBadge";
@@ -22,6 +22,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
 import { useDeleteProduct } from "../../hooks/useDeleteProduct";
 import { ImgModal } from "../modal/ImgModal";
+import { ProductionInfoModal } from "../modal/ProductInfoModal";
 
 const IMG_BASE_URL = `${import.meta.env.VITE_API_STATIC}/api`;
 
@@ -38,7 +39,10 @@ export const ProductTable = () => {
 
   const [editProdId, setEditProdId] = useState<string | null>(null);
   const [deleteProdId, setDeleteProdId] = useState<string | null>(null);
-  const [productId, setProductId] = useState<string | undefined>(undefined);
+  const [productImgId, setProductImgId] = useState<string | undefined>(
+    undefined,
+  );
+  const [productInfoId, setProductInfoId] = useState<string | null>(null);
 
   if (isPending) {
     return (
@@ -77,7 +81,7 @@ export const ProductTable = () => {
                 {product.imageUrl ? (
                   <div
                     className="relative w-12 h-12 md:w-20 md:h-20 cursor-pointer group"
-                    onClick={() => setProductId(product.id)}
+                    onClick={() => setProductImgId(product.id)}
                   >
                     <img
                       className="w-12 h-12 md:w-20 md:h-20 border-1 border-black"
@@ -123,6 +127,16 @@ export const ProductTable = () => {
                     }
                   />
                   <DropdownMenuContent align="center">
+                    <Button
+                      className="w-full flex justify-self-center"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setProductInfoId(product.id)}
+                    >
+                      <Info size={15} />
+                    </Button>
+
+                    <DropdownMenuSeparator />
                     <Button
                       className="w-full flex justify-self-center"
                       size="icon"
@@ -197,8 +211,15 @@ export const ProductTable = () => {
           onDelete={deleteMutation}
         />
       )}
+      {productInfoId && (
+        <ProductionInfoModal
+          prodId={productInfoId}
+          open={!!productInfoId}
+          onOpenChange={(open) => !open && setProductInfoId(null)}
+        />
+      )}
 
-      <ImgModal productId={productId} setProductId={setProductId} />
+      <ImgModal productId={productImgId} setProductId={setProductImgId} />
     </>
   );
 };
