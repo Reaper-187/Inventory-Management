@@ -7,7 +7,7 @@ import type {
   UpdateProduct,
 } from "../types/product.api.types";
 
-const PRODUCTS_API = `${import.meta.env.VITE_API_STATIC}/products`;
+const PRODUCTS_API = `${import.meta.env.VITE_API_STATIC}/api/products`;
 
 export const getProducts = async (
   query?: QueryProduct,
@@ -47,7 +47,6 @@ export const uploadProductImage = async (
 ): Promise<Product> => {
   const formData = new FormData();
   formData.append("image", file);
-
   const response = await axios.post<Product>(
     `${PRODUCTS_API}/${id}/image`,
     formData,
