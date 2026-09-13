@@ -23,13 +23,15 @@ import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
 import { useDeleteProduct } from "../../hooks/useDeleteProduct";
 import { ImgModal } from "../modal/ImgModal";
 import { ProductionInfoModal } from "../modal/ProductInfoModal";
+import { CreateCategory } from "@/components/shared/create-actions/CreateCatBTn";
+import { CreateSupplier } from "@/components/shared/create-actions/CreateSupplier";
+import { CreateProduct } from "@/components/shared/create-actions/CreateProduct";
 
 const IMG_BASE_URL = `${import.meta.env.VITE_API_STATIC}/api`;
 
 export const ProductTable = () => {
   const { mutate: deleteMutation, isPending: isDeleteing } = useDeleteProduct();
 
-  const [createOpen, setCreateOpen] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -56,12 +58,12 @@ export const ProductTable = () => {
 
   return (
     <>
-      <Button
-        className="flex justify-self-end"
-        onClick={() => setCreateOpen(true)}
-      >
-        create new Product
-      </Button>
+      <div className="flex flex-col md:flex-row md:flex-wrap lg:flex-nowrap justify-evenly gap-4 my-1">
+        <CreateProduct />
+        <CreateCategory />
+        <CreateSupplier />
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -187,11 +189,6 @@ export const ProductTable = () => {
           </Button>
         </div>
       </div>
-      <ProductDialog
-        mode="create"
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-      />
 
       {editProdId && (
         <ProductDialog
@@ -201,7 +198,6 @@ export const ProductTable = () => {
           onOpenChange={(open) => !open && setEditProdId(null)}
         />
       )}
-
       {deleteProdId && (
         <DeleteAlert
           id={deleteProdId}

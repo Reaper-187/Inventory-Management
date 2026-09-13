@@ -10,11 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetSuppliers } from "../../hooks/useGetSupplier";
-import { SupplierDialog } from "../form/SupplierDialog";
+import { CreateSupplier } from "@/components/shared/create-actions/CreateSupplier";
 
 export const SupplierDropdown = () => {
   const { data: suppliers, isPending } = useGetSuppliers();
-  const [createOpen, setCreateOpen] = useState(false);
   const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
 
   const toggleSupplier = (supplierId: string) => {
@@ -32,13 +31,7 @@ export const SupplierDropdown = () => {
           render={<Button variant="outline">Supplier Menu</Button>}
         />
         <DropdownMenuContent className="w-44">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setCreateOpen(true)}
-          >
-            Create new Supplier
-          </Button>
+          <CreateSupplier />
 
           <DropdownMenuGroup>
             <DropdownMenuLabel>categires</DropdownMenuLabel>
@@ -59,11 +52,6 @@ export const SupplierDropdown = () => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <SupplierDialog
-        mode="create"
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-      />
     </div>
   );
 };

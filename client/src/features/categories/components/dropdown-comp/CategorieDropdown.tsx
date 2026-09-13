@@ -10,11 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useGetCategories } from "../../hooks/useGetCategories";
 import { Spinner } from "@/components/ui/spinner";
-import { CategoryDialog } from "../form/CategoryDialog";
+import { CreateCategory } from "@/components/shared/create-actions/CreateCatBTn";
 
 export const CategorieDropdown = () => {
   const { data: categories, isPending } = useGetCategories();
-  const [createOpen, setCreateOpen] = useState(false);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
@@ -33,13 +32,7 @@ export const CategorieDropdown = () => {
           render={<Button variant="outline">Category Menu</Button>}
         />
         <DropdownMenuContent className="w-44">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setCreateOpen(true)}
-          >
-            Create new Category
-          </Button>
+          <CreateCategory />
 
           <DropdownMenuGroup>
             <DropdownMenuLabel>categires</DropdownMenuLabel>
@@ -60,11 +53,6 @@ export const CategorieDropdown = () => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <CategoryDialog
-        mode="create"
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-      />
     </div>
   );
 };
