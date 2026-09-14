@@ -7,7 +7,10 @@ export const CreateSupplier = () => {
 
   return (
     <div>
-      <Button variant="outline" onClick={() => setCreateOpen(true)}>
+      <Button
+        className="text-xs md:text-sm cursor-pointer hover:bg-primary/90"
+        onClick={() => setCreateOpen(true)}
+      >
         Create new Supplier
       </Button>
       <SupplierDialog

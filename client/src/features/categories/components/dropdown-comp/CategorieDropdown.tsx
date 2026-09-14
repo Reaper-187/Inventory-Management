@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useGetCategories } from "../../hooks/useGetCategories";
 import { Spinner } from "@/components/ui/spinner";
-import { CreateCategory } from "@/components/shared/create-actions/CreateCatBTn";
 
 export const CategorieDropdown = () => {
   const { data: categories, isPending } = useGetCategories();
@@ -26,14 +25,12 @@ export const CategorieDropdown = () => {
   };
 
   return (
-    <div className="flex justify-between px-5">
+    <div className="flex justify-between">
       <DropdownMenu>
         <DropdownMenuTrigger
           render={<Button variant="outline">Category Menu</Button>}
         />
         <DropdownMenuContent className="w-44">
-          <CreateCategory />
-
           <DropdownMenuGroup>
             <DropdownMenuLabel>categires</DropdownMenuLabel>
             {isPending ? (

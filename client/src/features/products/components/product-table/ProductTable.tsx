@@ -23,7 +23,7 @@ import { DeleteAlert } from "@/components/shared/deleteAlert/DeleteAlert";
 import { useDeleteProduct } from "../../hooks/useDeleteProduct";
 import { ImgModal } from "../modal/ImgModal";
 import { ProductionInfoModal } from "../modal/ProductInfoModal";
-import { CreateCategory } from "@/components/shared/create-actions/CreateCatBTn";
+import { CreateCategory } from "@/components/shared/create-actions/CreateCategory";
 import { CreateSupplier } from "@/components/shared/create-actions/CreateSupplier";
 import { CreateProduct } from "@/components/shared/create-actions/CreateProduct";
 
@@ -58,7 +58,7 @@ export const ProductTable = () => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:flex-wrap lg:flex-nowrap justify-evenly gap-4 my-1">
+      <div className="flex flex-wrap md:flex-row md:flex-wrap lg:flex-nowrap justify-evenly gap-4 my-1">
         <CreateProduct />
         <CreateCategory />
         <CreateSupplier />
@@ -67,10 +67,10 @@ export const ProductTable = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Image</TableHead>
+            <TableHead className="hidden lg:table-cell">Image</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Category</TableHead>
+            <TableHead className="hidden md:table-cell">SKU</TableHead>
+            <TableHead className="hidden md:table-cell">Category</TableHead>
             <TableHead>Stock</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Actions</TableHead>
@@ -79,7 +79,7 @@ export const ProductTable = () => {
         <TableBody>
           {products?.map((product) => (
             <TableRow key={product.id}>
-              <TableCell className="font-medium">
+              <TableCell className="hidden lg:table-cell font-medium">
                 {product.imageUrl ? (
                   <div
                     className="relative w-12 h-12 md:w-20 md:h-20 cursor-pointer group"
@@ -108,8 +108,12 @@ export const ProductTable = () => {
                 )}
               </TableCell>
               <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell>{product.sku}</TableCell>
-              <TableCell>{product.category.name}</TableCell>
+              <TableCell className="hidden md:table-cell">
+                {product.sku}
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                {product.category.name}
+              </TableCell>
               <TableCell>
                 <StockLevelBadge
                   currentStock={product.currentStock}

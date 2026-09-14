@@ -7,7 +7,12 @@ export const CreateProduct = () => {
 
   return (
     <div>
-      <Button onClick={() => setCreateOpen(true)}>Create new Product</Button>
+      <Button
+        className="text-xs md:text-sm cursor-pointer hover:bg-primary/90"
+        onClick={() => setCreateOpen(true)}
+      >
+        Create new Product
+      </Button>
       <ProductDialog
         mode="create"
         open={createOpen}

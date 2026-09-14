@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetSuppliers } from "../../hooks/useGetSupplier";
-import { CreateSupplier } from "@/components/shared/create-actions/CreateSupplier";
 
 export const SupplierDropdown = () => {
   const { data: suppliers, isPending } = useGetSuppliers();
@@ -25,16 +24,14 @@ export const SupplierDropdown = () => {
   };
 
   return (
-    <div className="flex justify-between px-5">
+    <div className="flex justify-between">
       <DropdownMenu>
         <DropdownMenuTrigger
           render={<Button variant="outline">Supplier Menu</Button>}
         />
         <DropdownMenuContent className="w-44">
-          <CreateSupplier />
-
           <DropdownMenuGroup>
-            <DropdownMenuLabel>categires</DropdownMenuLabel>
+            <DropdownMenuLabel>supplier</DropdownMenuLabel>
             {isPending ? (
               <Spinner className="flex justify-self-center" />
             ) : (
