@@ -11,16 +11,22 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useGetSuppliers } from "../../hooks/useGetSupplier";
 
-export const SupplierDropdown = () => {
+interface SupplierDropdownProps {
+  value: string[];
+  onChange: (value: string[]) => void;
+}
+export const SupplierDropdown = ({
+  value,
+  onChange,
+}: SupplierDropdownProps) => {
   const { data: suppliers, isPending } = useGetSuppliers();
-  const [selectedSuppliers, setSelectedSuppliers] = useState<string[]>([]);
 
   const toggleSupplier = (supplierId: string) => {
-    setSelectedSuppliers((prev) =>
-      prev.includes(supplierId)
-        ? prev.filter((id) => id !== supplierId)
-        : [...prev, supplierId],
-    );
+    const newValue = value.includes(supplierId)
+      ? value.filter((id) => id !== supplierId)
+      : [...value, supplierId];
+
+    onChange(newValue);
   };
 
   return (
@@ -38,7 +44,7 @@ export const SupplierDropdown = () => {
               suppliers?.map((supplier) => (
                 <DropdownMenuCheckboxItem
                   key={supplier.id}
-                  checked={selectedSuppliers.includes(supplier.id)}
+                  checked={value.includes(supplier.id)}
                   onCheckedChange={() => toggleSupplier(supplier.id)}
                   className="flex justify-between items-center"
                 >

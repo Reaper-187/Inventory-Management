@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,17 +10,23 @@ import {
 import { useGetCategories } from "../../hooks/useGetCategories";
 import { Spinner } from "@/components/ui/spinner";
 
-export const CategorieDropdown = () => {
+interface CategorieDropdownProps {
+  value: string[];
+  onChange: (value: string[]) => void;
+}
+
+export const CategorieDropdown = ({
+  value,
+  onChange,
+}: CategorieDropdownProps) => {
   const { data: categories, isPending } = useGetCategories();
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
   const toggleCategory = (categoryId: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId],
-    );
+    const newValue = value.includes(categoryId)
+      ? value.filter((id) => id !== categoryId)
+      : [...value, categoryId];
+
+    onChange(newValue);
   };
 
   return (
@@ -39,7 +44,7 @@ export const CategorieDropdown = () => {
               categories?.map((category) => (
                 <DropdownMenuCheckboxItem
                   key={category.id}
-                  checked={selectedCategories.includes(category.id)}
+                  checked={value.includes(category.id)}
                   onCheckedChange={() => toggleCategory(category.id)}
                   className="flex justify-between items-center"
                 >
