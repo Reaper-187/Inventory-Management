@@ -26,18 +26,26 @@ import { ProductionInfoModal } from "../modal/ProductInfoModal";
 import { CreateCategory } from "@/components/shared/create-actions/CreateCategory";
 import { CreateSupplier } from "@/components/shared/create-actions/CreateSupplier";
 import { CreateProduct } from "@/components/shared/create-actions/CreateProduct";
+import type { QueryProduct } from "../../types/product.api.types";
 
 const IMG_BASE_URL = `${import.meta.env.VITE_API_STATIC}/api`;
 
-export const ProductTable = () => {
-  const { mutate: deleteMutation, isPending: isDeleteing } = useDeleteProduct();
+interface ProductTableProps {
+  query: QueryProduct;
+  page: number;
+  onPageChange: (page: number) => void;
+}
 
-  const [page, setPage] = useState(1);
-  const limit = 10;
-
-  const { data: response, isPending } = useGetProducts({ page, limit });
+export const ProductTable = ({
+  query,
+  page,
+  onPageChange,
+}: ProductTableProps) => {
+  const { data: response, isPending } = useGetProducts(query);
   const products = response?.data;
   const meta = response?.meta;
+
+  const { mutate: deleteMutation, isPending: isDeleteing } = useDeleteProduct();
 
   const [editProdId, setEditProdId] = useState<string | null>(null);
   const [deleteProdId, setDeleteProdId] = useState<string | null>(null);
@@ -55,7 +63,6 @@ export const ProductTable = () => {
       </div>
     );
   }
-
   return (
     <>
       <div className="flex flex-wrap md:flex-row md:flex-wrap lg:flex-nowrap justify-evenly gap-4 my-1">
@@ -179,15 +186,16 @@ export const ProductTable = () => {
             variant="outline"
             size="sm"
             disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}
+            onClick={() => onPageChange(page - 1)}
           >
             Previous
           </Button>
+
           <Button
             variant="outline"
             size="sm"
             disabled={!meta || page >= meta.totalPages}
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => onPageChange(page + 1)}
           >
             Next
           </Button>
