@@ -1,5 +1,6 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsInt,
   IsOptional,
@@ -13,13 +14,23 @@ export class QueryProductDto {
   @IsString()
   search?: string;
 
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    return Array.isArray(value) ? value : [value];
+  })
   @IsOptional()
-  @IsUUID()
-  categoryId?: string;
+  @IsArray()
+  @IsUUID('4', { each: true })
+  categoryId?: string[];
 
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    return Array.isArray(value) ? value : [value];
+  })
   @IsOptional()
-  @IsUUID()
-  supplierId?: string;
+  @IsArray()
+  @IsUUID('4', { each: true })
+  supplierId?: string[];
 
   @IsOptional()
   @Type(() => Boolean)

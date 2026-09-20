@@ -10,9 +10,7 @@ import {
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
-  FileTypeValidator,
   Query,
-  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service.js';
 import { CreateProductDto } from '../dtos/create-product.dto.js';

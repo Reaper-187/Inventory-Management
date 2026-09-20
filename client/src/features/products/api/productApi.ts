@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 import type {
   CreateProduct,
   PaginationMeta,
@@ -12,7 +13,14 @@ const PRODUCTS_API = `${import.meta.env.VITE_API_STATIC}/api/products`;
 export const getProducts = async (
   query?: QueryProduct,
 ): Promise<{ data: Product[]; meta: PaginationMeta }> => {
-  const response = await axios.get(PRODUCTS_API, { params: query });
+  const response = await axios.get(PRODUCTS_API, {
+    params: query,
+    // Axios serialisiert Arrays immer mit eckigen Klammern
+    // (categoryId[]=x), das Backend/qs erwartet aber categoryId=x&categoryId=y
+    // (arrayFormat: 'repeat'), sonst kommen categoryId/supplierId als undefined im DTO an, da der Property-Name nicht mehr matcht. !!!! wichtig
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
+  });
   return response.data;
 };
 

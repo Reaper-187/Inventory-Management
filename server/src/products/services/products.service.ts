@@ -25,11 +25,11 @@ export class ProductsService {
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
     }
-    if (categoryId) {
-      where.categoryId = categoryId;
+    if (categoryId?.length) {
+      where.categoryId = { in: categoryId };
     }
-    if (supplierId) {
-      where.supplierId = supplierId;
+    if (supplierId?.length) {
+      where.supplierId = { in: supplierId };
     }
 
     if (!lowStock) {

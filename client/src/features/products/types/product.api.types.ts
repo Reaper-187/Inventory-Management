@@ -40,8 +40,8 @@ export type UpdateProduct = z.infer<typeof UpdateProd>;
 
 export const QueryProductSchema = z.object({
   search: z.string().optional(),
-  categoryId: z.string().uuid().optional(),
-  supplierId: z.string().uuid().optional(),
+  categoryId: z.array(z.string().uuid()).optional(),
+  supplierId: z.array(z.string().uuid()).optional(),
   lowStock: z.boolean().optional(),
   page: z.number().min(1).optional(),
   limit: z.number().min(1).optional(),
