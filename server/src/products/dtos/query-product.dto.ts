@@ -33,7 +33,11 @@ export class QueryProductDto {
   supplierId?: string[];
 
   @IsOptional()
-  @Type(() => Boolean)
+  @Transform(({ value }) => {
+    if (value === undefined) return undefined;
+    if (typeof value === 'boolean') return value;
+    return value === 'true';
+  })
   @IsBoolean()
   lowStock?: boolean;
 
