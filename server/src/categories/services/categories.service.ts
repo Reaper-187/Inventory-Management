@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { Category } from '../generated/prisma/client.js';
-import { CreateCatDto } from './dto/create-cat.dto.js';
-import { UpdateCatDto } from './dto/update-cat.dto.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { Category } from '../../generated/prisma/client.js';
+import { CreateCatDto } from '../dtos/create-cat.dto.js';
+import { UpdateCatDto } from '../dtos/update-cat.dto.js';
 
 @Injectable()
 export class CategoriesService {

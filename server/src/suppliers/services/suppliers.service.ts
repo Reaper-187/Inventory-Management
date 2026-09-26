@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { Supplier } from '../generated/prisma/client.js';
-import { CreateSuppDto } from './dto/createSupp.dto.js';
-import { UpdateSuppDto } from './dto/updateSupp.dto.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
+import { Supplier } from '../../generated/prisma/client.js';
+import { CreateSuppDto } from '../dtos/createSupp.dto.js';
+import { UpdateSuppDto } from '../dtos/updateSupp.dto.js';
 
 @Injectable()
 export class SuppliersService {

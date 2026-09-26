@@ -4,40 +4,40 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
-import { SuppliersService } from './suppliers.service.js';
-import { CreateSuppDto } from './dto/createSupp.dto.js';
-import { UpdateSuppDto } from './dto/updateSupp.dto.js';
+import { SuppliersService } from '../services/suppliers.service.js';
+import { CreateSuppDto } from '../dtos/createSupp.dto.js';
+import { UpdateSuppDto } from '../dtos/updateSupp.dto.js';
 
 @Controller('suppliers')
 export class SuppliersController {
   constructor(private readonly supplierService: SuppliersService) {}
 
-  @Get('fetch-suppliers')
+  @Get()
   fetchAllSuppliers() {
     const data = this.supplierService.getAllSuppliers();
     return data;
   }
 
-  @Get('fetch-one-supplier/:id')
+  @Get(':id')
   findOneSupplier(@Param('id') id: string) {
     const data = this.supplierService.findOneSupplier(id);
     return data;
   }
-  @Post('create-supplier')
+  @Post()
   createSupplier(@Body() createSuppDto: CreateSuppDto) {
     return this.supplierService.createSupplier(createSuppDto);
   }
-  @Put('update-supplier/:id')
+  @Patch(':id')
   updateSupplier(
     @Param('id') id: string,
     @Body() updateSuppDto: UpdateSuppDto,
   ) {
     return this.supplierService.updateSupplier(id, updateSuppDto);
   }
-  @Delete('delete-supplier/:id')
+  @Delete(':id')
   deleteSupplier(@Param('id') id: string) {
     return this.supplierService.deleteSupplier(id);
   }
