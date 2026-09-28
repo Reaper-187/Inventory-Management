@@ -9,7 +9,20 @@
 * 🟢 You can import this file directly.
 */
 
+export const MovementType = {
+  IN: 'IN',
+  OUT: 'OUT'
+} as const
+
+export type MovementType = (typeof MovementType)[keyof typeof MovementType]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const MovementReason = {
+  PURCHASE: 'PURCHASE',
+  RETURN_IN: 'RETURN_IN',
+  SALE: 'SALE',
+  DAMAGE: 'DAMAGE',
+  CORRECTION: 'CORRECTION'
+} as const
+
+export type MovementReason = (typeof MovementReason)[keyof typeof MovementReason]

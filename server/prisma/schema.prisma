@@ -54,8 +54,44 @@ model Product {
   supplierId String   @db.Uuid
   supplier   Supplier @relation(fields: [supplierId], references: [id])
 
+  movements StockMovement[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("products")
+}
+
+enum MovementType {
+  IN
+  OUT
+
+  @@map("movement_type")
+}
+
+enum MovementReason {
+  PURCHASE
+  RETURN_IN
+  SALE
+  DAMAGE
+  CORRECTION
+
+  @@map("movement_reason")
+}
+
+model StockMovement {
+  id         String         @id @default(uuid())
+  productId  String
+  product    Product        @relation(fields: [productId], references: [id])
+  type       MovementType
+  reason     MovementReason
+  quantity   Int
+  note       String?
+  salePrice  Decimal?       @db.Decimal(10, 2)
+  occurredAt DateTime       @default(now())
+  createdAt  DateTime       @default(now())
+
+  @@index([productId]) // Ohne @@index ihn muss die DB bei WHERE jede Zeile der Tabelle durchsuchen
+  @@index([occurredAt])
+  @@map("stock_movements")
 }

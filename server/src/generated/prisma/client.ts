@@ -54,3 +54,8 @@ export type Supplier = Prisma.SupplierModel
  * 
  */
 export type Product = Prisma.ProductModel
+/**
+ * Model StockMovement
+ * 
+ */
+export type StockMovement = Prisma.StockMovementModel
