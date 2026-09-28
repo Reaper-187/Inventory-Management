@@ -5,6 +5,7 @@ import { SuppliersModule } from './suppliers/suppliers.module.js';
 import { ProductsModule } from './products/products.module.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { StockMovementsModule } from './stock-movements/stock-movements.module.js';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { join } from 'path';
     CategoriesModule,
     SuppliersModule,
     ProductsModule,
+    StockMovementsModule,
   ],
 })
 export class AppModule {}
