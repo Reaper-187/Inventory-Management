@@ -6,10 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { StockMovementsService } from '../services/stock-movements.service.js';
-import { CreateStockMovementDto } from './dto/create-stock-movement.dto';
-import { UpdateStockMovementDto } from './dto/update-stock-movement.dto';
+import { CreateStockMovementDto } from '../dtos/create-stock-movement.dto.js';
+import { QueryStockMovementDto } from '../dtos/query-stock-movement.dto.js';
 
 @Controller('stock-movements')
 export class StockMovementsController {
@@ -21,25 +22,7 @@ export class StockMovementsController {
   }
 
   @Get()
-  findAll() {
-    return this.stockMovementsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.stockMovementsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateStockMovementDto: UpdateStockMovementDto,
-  ) {
-    return this.stockMovementsService.update(+id, updateStockMovementDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stockMovementsService.remove(+id);
+  findAll(@Query() queryStockMovementDto: QueryStockMovementDto) {
+    return this.stockMovementsService.findAll(queryStockMovementDto);
   }
 }
