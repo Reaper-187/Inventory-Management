@@ -7,6 +7,8 @@ import {
 import { MovementReason, MovementType } from '../../generated/prisma/enums.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { CreateStockMovementDto } from '../dtos/create-stock-movement.dto.js';
+import { Prisma } from '../../generated/prisma/client.js';
+import { QueryStockMovementDto } from '../dtos/query-stock-movement.dto.js';
 
 const ALLOWED_REASONS: Record<MovementType, MovementReason[]> = {
   IN: [
@@ -82,5 +84,47 @@ export class StockMovementsService {
         },
       });
     });
+  }
+
+  async findAll(query: QueryStockMovementDto) {
+    const { productId, type, from, to, page, limit } = query;
+
+    const where: Prisma.StockMovementWhereInput = {};
+
+    if (productId?.length) {
+      where.productId = { in: productId };
+    }
+    if (type) {
+      where.type = type;
+    }
+    if (from || to) {
+      where.occurredAt = {
+        ...(from && { gte: new Date(from) }),
+        ...(to && { lte: new Date(to) }),
+      };
+    }
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.stockMovement.findMany({
+        where,
+        include: {
+          product: { select: { id: true, name: true, sku: true } },
+        },
+        orderBy: [{ occurredAt: 'desc' }, { createdAt: 'desc' }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.stockMovement.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }
