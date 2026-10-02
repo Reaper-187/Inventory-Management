@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { StockMovementsService } from './stock-movements.service';
-import { StockMovementsController } from './stock-movements.controller';
+import { StockMovementsController } from './controllers/stock-movements.controller.js';
+import { StockMovementsService } from './services/stock-movements.service.js';
 
 @Module({
   controllers: [StockMovementsController],
