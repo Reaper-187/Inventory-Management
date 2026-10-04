@@ -2,11 +2,11 @@ import axios from "axios";
 import qs from "qs";
 import type {
   CreateProduct,
-  PaginationMeta,
   Product,
   QueryProduct,
   UpdateProduct,
 } from "../types/product.api.types";
+import type { PaginationMeta } from "@/components/shared/shared/pagination.types";
 
 const PRODUCTS_API = `${import.meta.env.VITE_API_STATIC}/api/products`;
 
