@@ -1,4 +1,4 @@
-import { PaginationMetaSchema } from "@/components/shared/shared/pagination.types";
+import { PaginationMetaSchema } from "@/components/shared/api/pagination.types";
 import { z } from "zod";
 
 export const MovementTypeEnum = z.enum(["IN", "OUT"]);

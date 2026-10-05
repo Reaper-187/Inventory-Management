@@ -1,33 +1,31 @@
-import axios from "axios";
-import qs from "qs";
 import {
   StockMovementSchema,
   StockMovementListSchema,
   type StockMovement,
   type CreateStockMovement,
   type QueryMovement,
+  type StockMovementList,
 } from "../types/stockMovements.api.types";
+import { apiClient } from "@/components/shared/api/apiClient";
 
-const STOCK_MOVEMENTS_API = `${import.meta.env.VITE_API_URL}/stock-movements`; // an dein PRODUCTS_API-Muster anpassen
+const STOCK_MOVEMENTS_API = `/stock-movements`;
 
-export const getMovements = async (query?: QueryMovement) => {
-  const response = await axios.get(STOCK_MOVEMENTS_API, {
+export const getMovements = async (
+  query: QueryMovement,
+): Promise<StockMovementList> => {
+  const { data } = await apiClient.get(STOCK_MOVEMENTS_API, {
     params: query,
-    withCredentials: true,
-    // das Backend/qs erwartet productId=x&productId=y (arrayFormat: 'repeat')
-    paramsSerializer: (params) =>
-      qs.stringify(params, { arrayFormat: "repeat" }),
+    // productId soll als ?productId=a&productId=b ankommen, nicht als ?productId[]=a
+    paramsSerializer: { indexes: null },
   });
 
-  return StockMovementListSchema.parse(response.data);
+  return StockMovementListSchema.parse(data);
 };
 
 export const createMovement = async (
-  data: CreateStockMovement,
+  payload: CreateStockMovement,
 ): Promise<StockMovement> => {
-  const response = await axios.post(STOCK_MOVEMENTS_API, data, {
-    withCredentials: true,
-  });
+  const { data } = await apiClient.post(STOCK_MOVEMENTS_API, payload);
 
-  return StockMovementSchema.parse(response.data);
+  return StockMovementSchema.parse(data);
 };
