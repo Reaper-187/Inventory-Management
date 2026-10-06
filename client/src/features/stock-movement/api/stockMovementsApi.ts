@@ -11,7 +11,7 @@ import { apiClient } from "@/components/shared/api/apiClient";
 const STOCK_MOVEMENTS_API = `/stock-movements`;
 
 export const getMovements = async (
-  query: QueryMovement,
+  query?: QueryMovement,
 ): Promise<StockMovementList> => {
   const { data } = await apiClient.get(STOCK_MOVEMENTS_API, {
     params: query,
