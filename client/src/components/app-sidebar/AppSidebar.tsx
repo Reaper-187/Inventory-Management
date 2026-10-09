@@ -37,6 +37,11 @@ const items = [
     url: "/products",
     icon: List,
   },
+  {
+    title: "Movement-History",
+    url: "/stock-movements",
+    icon: List,
+  },
 ];
 
 export function AppSidebar() {
