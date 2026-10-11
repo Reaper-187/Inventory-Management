@@ -5,7 +5,7 @@ import type {
   UpdateCat,
 } from "../types/category.api.types";
 
-const CATEGORIES_API = `${import.meta.env.VITE_API_STATIC}/api/cateogries`;
+const CATEGORIES_API = `${import.meta.env.VITE_API_STATIC}/api/categories`;
 
 export const getCategories = async (): Promise<Category[]> => {
   const response = await axios.get<Category[]>(CATEGORIES_API, {});
