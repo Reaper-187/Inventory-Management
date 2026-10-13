@@ -1,3 +1,4 @@
+import { MovementFilters } from "@/features/stock-movement/components/movement-filter/MovementFilter";
 import { MovementHistoryTable } from "@/features/stock-movement/components/movement-tabel/MovementHistoryTable";
 import type { QueryMovement } from "@/features/stock-movement/types/stockMovements.api.types";
 import { useState } from "react";
@@ -16,6 +17,10 @@ export const StockMovementPage = () => {
 
   return (
     <>
+      <MovementFilters
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+      />
       <MovementHistoryTable
         query={{ ...filters, page, limit }}
         page={page}
