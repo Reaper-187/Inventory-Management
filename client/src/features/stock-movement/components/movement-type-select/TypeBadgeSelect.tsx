@@ -13,11 +13,13 @@ const TYPE_ITEMS = [
 
 export const TypeBadgeSelect = ({ value, onChange }: TypeBadgeSelectProps) => {
   return (
-    <SelectComp
-      items={TYPE_ITEMS}
-      value={value}
-      onChange={(value) => onChange(value as MovementType | "")}
-      placeholder="Typ"
-    />
+    <div className="w-full md:w-1/4 lg:w-1/5">
+      <SelectComp
+        items={TYPE_ITEMS}
+        value={value}
+        onChange={(value) => onChange(value as MovementType | "")}
+        placeholder="Typ"
+      />
+    </div>
   );
 };

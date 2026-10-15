@@ -10,13 +10,14 @@ import { apiClient } from "@/components/shared/api/apiClient";
 
 const STOCK_MOVEMENTS_API = `/stock-movements`;
 
+const toEndOfDay = (date?: string) =>
+  date ? `${date}T23:59:59.999` : undefined;
+
 export const getMovements = async (
   query?: QueryMovement,
 ): Promise<StockMovementList> => {
   const { data } = await apiClient.get(STOCK_MOVEMENTS_API, {
-    params: query,
-    // productId soll als ?productId=a&productId=b ankommen, nicht als ?productId[]=a
-    paramsSerializer: { indexes: null },
+    params: query && { ...query, to: toEndOfDay(query.to) },
   });
 
   return StockMovementListSchema.parse(data);
