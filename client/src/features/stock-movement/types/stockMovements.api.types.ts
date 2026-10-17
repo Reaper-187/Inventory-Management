@@ -41,15 +41,38 @@ export const StockMovementListSchema = z.object({
 });
 export type StockMovementList = z.infer<typeof StockMovementListSchema>;
 
-export const CreateStockMovement = z.object({
-  productId: z.string().uuid(),
-  type: MovementTypeEnum,
-  reason: MovementReasonEnum,
-  quantity: z.number().int().positive(),
-  note: z.string().max(500).optional(),
-  salePrice: z.number().positive().optional(),
-  occurredAt: z.string().optional(),
-});
+export const ALLOWED_REASONS: Record<MovementType, MovementReason[]> = {
+  IN: ["PURCHASE", "RETURN_IN", "CORRECTION"],
+  OUT: ["SALE", "DAMAGE", "CORRECTION"],
+};
+
+export const CreateStockMovement = z
+  .object({
+    productId: z.string().uuid(),
+    type: MovementTypeEnum,
+    reason: MovementReasonEnum,
+    quantity: z.number().int().positive(),
+    note: z.string().max(500).optional(),
+    salePrice: z.number().positive().optional(),
+    occurredAt: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!ALLOWED_REASONS[data.type].includes(data.reason)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["reason"],
+        message: "Grund passt nicht zum gewählten Typ",
+      });
+    }
+    if (data.salePrice !== undefined && data.reason !== "SALE") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["salePrice"],
+        message: "Verkaufspreis ist nur beim Grund „Verkauf“ erlaubt",
+      });
+    }
+  });
+
 export type CreateStockMovement = z.infer<typeof CreateStockMovement>;
 
 export const QueryMovementSchema = z.object({
