@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { MovementTypeBadge } from "./MovementTypeBadge";
 import type { QueryMovement } from "../../types/stockMovements.api.types";
 import { useGetMovements } from "../../hooks/useGetMovements";
+import { StockMovementDialog } from "../form/StockMovementDialog";
+import { useState } from "react";
+import { DropdownMenuContent } from "@/components/ui/dropdown-menu";
+import { BarChart3, Plus, RotateCw } from "lucide-react";
 
 interface MovementHistoryTableProps {
   query: QueryMovement;
@@ -26,6 +30,8 @@ export const MovementHistoryTable = ({
   const { data: response, isPending } = useGetMovements(query);
   const movements = response?.data;
   const meta = response?.meta;
+
+  const [rebookProductId, setRebookProductId] = useState<string | null>(null);
 
   if (isPending) {
     return (
@@ -49,6 +55,7 @@ export const MovementHistoryTable = ({
             <TableHead className="hidden md:table-cell">Grund</TableHead>
             <TableHead>Menge</TableHead>
             <TableHead className="hidden lg:table-cell">Notiz</TableHead>
+            <TableHead>Aktionen</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,6 +80,16 @@ export const MovementHistoryTable = ({
               </TableCell>
               <TableCell className="hidden lg:table-cell text-muted-foreground">
                 {movement.note ?? "-"}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Neue Bewegung für dieses Produkt"
+                  onClick={() => setRebookProductId(movement.productId)}
+                >
+                  <RotateCw size={15} />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -103,6 +120,14 @@ export const MovementHistoryTable = ({
           </Button>
         </div>
       </div>
+
+      {rebookProductId && (
+        <StockMovementDialog
+          open={true}
+          onOpenChange={(open) => !open && setRebookProductId(null)}
+          defaultProductId={rebookProductId}
+        />
+      )}
     </>
   );
 };

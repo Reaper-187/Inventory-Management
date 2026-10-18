@@ -11,8 +11,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StockMovementDialog } from "../form/StockMovementDialog";
 
 interface MovementFiltersProps {
   filters: Omit<QueryMovement, "page" | "limit">;
@@ -27,6 +28,8 @@ export const MovementFilters = ({
     from: filters.from ? new Date(filters.from) : undefined,
     to: filters.to ? new Date(filters.to) : undefined,
   };
+
+  const [createOpen, setCreateOpen] = useState(false);
 
   const handleProductChange = (productId: string[]) => {
     onFiltersChange({
@@ -56,6 +59,10 @@ export const MovementFilters = ({
         value={filters.productId ?? []}
         onChange={handleProductChange}
       />
+      <Button onClick={() => setCreateOpen(true)}>
+        <Plus className="mr-2 h-4 w-4" />
+        Neue Bewegung
+      </Button>
 
       <TypeBadgeSelect value={filters.type ?? ""} onChange={handleTypeChange} />
 
@@ -97,6 +104,10 @@ export const MovementFilters = ({
           />
         </PopoverContent>
       </Popover>
+
+      {createOpen && (
+        <StockMovementDialog open={createOpen} onOpenChange={setCreateOpen} />
+      )}
     </div>
   );
 };
