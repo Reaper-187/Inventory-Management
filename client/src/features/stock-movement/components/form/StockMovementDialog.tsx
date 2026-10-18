@@ -35,6 +35,7 @@ import {
 } from "../../types/stockMovements.api.types";
 import { ProductSelect } from "@/features/products/components/product-select/ProductSelect";
 import { REASON_LABELS } from "../constants/movement.labels";
+import { useGetOneProduct } from "@/features/products";
 
 interface StockMovementDialogProps {
   open: boolean;
@@ -55,7 +56,7 @@ export const StockMovementDialog = ({
     watch,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<CreateStockMovementType>({
     resolver: zodResolver(CreateStockMovement),
     defaultValues: {
@@ -68,12 +69,21 @@ export const StockMovementDialog = ({
 
   const type = watch("type");
   const reason = watch("reason");
+  const productId = watch("productId");
+
+  const { data: selectedProduct } = useGetOneProduct(productId);
 
   useEffect(() => {
     if (!ALLOWED_REASONS[type].includes(reason)) {
       setValue("reason", ALLOWED_REASONS[type][0]);
     }
   }, [type]);
+
+  useEffect(() => {
+    if (reason === "SALE" && selectedProduct && !dirtyFields.salePrice) {
+      setValue("salePrice", selectedProduct.price);
+    }
+  }, [reason, selectedProduct]);
 
   const onSubmit = (values: CreateStockMovementType) => {
     mutate(values, {
@@ -189,6 +199,11 @@ export const StockMovementDialog = ({
                     }
                     className={errors.quantity ? "border-destructive" : ""}
                   />
+                  {type === "OUT" && selectedProduct && (
+                    <p className="text-sm text-muted-foreground">
+                      Verfügbar: {selectedProduct.currentStock} Stück
+                    </p>
+                  )}
                   {errors.quantity && (
                     <p className="text-sm text-destructive">
                       {errors.quantity.message}
@@ -205,20 +220,28 @@ export const StockMovementDialog = ({
                 render={({ field }) => (
                   <Field>
                     <Label htmlFor="salePrice">Verkaufspreis</Label>
-                    <Input
-                      id="salePrice"
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      disabled={isPending}
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          clampNonNegativeNumber(e.target.valueAsNumber, 1),
-                        )
-                      }
-                      className={errors.salePrice ? "border-destructive" : ""}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="salePrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        disabled={isPending}
+                        value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            clampNonNegativeNumber(e.target.valueAsNumber, 0),
+                          )
+                        }
+                        className={cn(
+                          "pr-8",
+                          errors.salePrice ? "border-destructive" : "",
+                        )}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                        €
+                      </span>
+                    </div>
                     {errors.salePrice && (
                       <p className="text-sm text-destructive">
                         {errors.salePrice.message}
