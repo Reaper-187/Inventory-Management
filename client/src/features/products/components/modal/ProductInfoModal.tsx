@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/collapsible";
 
 import { useGetOneProduct } from "../../hooks/useGetOneProduct";
-import { ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown, History } from "lucide-react";
+import { ProductMovementHistory } from "../product-history/ProductMovementHistory";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ProductionInfoModalProps {
   prodId?: string;
@@ -27,89 +30,143 @@ export const ProductionInfoModal = ({
 }: ProductionInfoModalProps) => {
   const { data, isPending } = useGetOneProduct(prodId);
 
+  const [view, setView] = useState<"info" | "history">("info");
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) setView("info");
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle>Produkt-Details</DialogTitle>
-          <DialogDescription>
-            Übersicht der hinterlegten Informationen
-          </DialogDescription>
-        </DialogHeader>
+        {view === "info" ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>Produkt-Details</DialogTitle>
+              <DialogDescription>
+                Übersicht der hinterlegten Informationen
+              </DialogDescription>
+            </DialogHeader>
 
-        {isPending ? (
-          <p className="text-sm text-muted-foreground">Wird geladen...</p>
-        ) : data ? (
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-            <dt className="font-medium text-muted-foreground">Name</dt>
-            <dd>{data.name}</dd>
-
-            <dt className="font-medium text-muted-foreground">SKU</dt>
-            <dd>{data.sku}</dd>
-
-            <dt className="font-medium text-muted-foreground">Beschreibung</dt>
-            <dd>{data.description ?? "-"}</dd>
-
-            <dt className="font-medium text-muted-foreground">Preis</dt>
-            <dd>
-              {new Intl.NumberFormat("de-DE", {
-                style: "currency",
-                currency: "EUR",
-              }).format(data.price)}
-            </dd>
-
-            <dt className="font-medium text-muted-foreground">
-              Mindestbestand
-            </dt>
-            <dd>{data.minStock}</dd>
-
-            <dt className="font-medium text-muted-foreground">
-              Aktueller Bestand
-            </dt>
-            <dd>{data.currentStock}</dd>
-
-            <dt className="font-medium text-muted-foreground">Kategorie</dt>
-            <dd>{data.category.name}</dd>
-
-            <dt className="font-medium text-muted-foreground">Erstellt am</dt>
-            <dd>{new Date(data.createdAt).toLocaleString()}</dd>
-
-            <dt className="font-medium text-muted-foreground">
-              Aktualisiert am
-            </dt>
-            <dd>{new Date(data.updatedAt).toLocaleString()}</dd>
-          </dl>
-        ) : (
-          <p className="text-sm text-destructive">Keine Daten gefunden.</p>
-        )}
-
-        {data && (
-          <Collapsible className="mt-4">
-            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border p-3 text-sm font-medium hover:bg-accent">
-              <span>Lieferant</span>
-              <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2 rounded-md border p-3">
+            {isPending ? (
+              <p className="text-sm text-muted-foreground">Wird geladen...</p>
+            ) : data ? (
               <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
                 <dt className="font-medium text-muted-foreground">Name</dt>
-                <dd>{data.supplier.name}</dd>
+                <dd>{data.name}</dd>
 
-                <dt className="font-medium text-muted-foreground">E-Mail</dt>
-                <dd>{data.supplier.email}</dd>
+                <dt className="font-medium text-muted-foreground">SKU</dt>
+                <dd>{data.sku}</dd>
 
                 <dt className="font-medium text-muted-foreground">
-                  Kontaktperson
+                  Beschreibung
                 </dt>
-                <dd>{data.supplier.contactPerson ?? "-"}</dd>
+                <dd>{data.description ?? "-"}</dd>
 
-                <dt className="font-medium text-muted-foreground">Telefon</dt>
-                <dd>{data.supplier.phone ?? "-"}</dd>
+                <dt className="font-medium text-muted-foreground">Preis</dt>
+                <dd>
+                  {new Intl.NumberFormat("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  }).format(data.price)}
+                </dd>
 
-                <dt className="font-medium text-muted-foreground">Adresse</dt>
-                <dd>{data.supplier.address ?? "-"}</dd>
+                <dt className="font-medium text-muted-foreground">
+                  Mindestbestand
+                </dt>
+                <dd>{data.minStock}</dd>
+
+                <dt className="font-medium text-muted-foreground">
+                  Aktueller Bestand
+                </dt>
+                <dd>{data.currentStock}</dd>
+
+                <dt className="font-medium text-muted-foreground">Kategorie</dt>
+                <dd>{data.category.name}</dd>
+
+                <dt className="font-medium text-muted-foreground">
+                  Erstellt am
+                </dt>
+                <dd>{new Date(data.createdAt).toLocaleString()}</dd>
+
+                <dt className="font-medium text-muted-foreground">
+                  Aktualisiert am
+                </dt>
+                <dd>{new Date(data.updatedAt).toLocaleString()}</dd>
               </dl>
-            </CollapsibleContent>
-          </Collapsible>
+            ) : (
+              <p className="text-sm text-destructive">Keine Daten gefunden.</p>
+            )}
+            {data && (
+              <>
+                <Collapsible className="mt-4">
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border p-3 text-sm font-medium hover:bg-accent">
+                    <span>Lieferant</span>
+                    <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2 rounded-md border p-3">
+                    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                      <dt className="font-medium text-muted-foreground">
+                        Name
+                      </dt>
+                      <dd>{data.supplier.name}</dd>
+
+                      <dt className="font-medium text-muted-foreground">
+                        E-Mail
+                      </dt>
+                      <dd>{data.supplier.email}</dd>
+
+                      <dt className="font-medium text-muted-foreground">
+                        Kontaktperson
+                      </dt>
+                      <dd>{data.supplier.contactPerson ?? "-"}</dd>
+
+                      <dt className="font-medium text-muted-foreground">
+                        Telefon
+                      </dt>
+                      <dd>{data.supplier.phone ?? "-"}</dd>
+
+                      <dt className="font-medium text-muted-foreground">
+                        Adresse
+                      </dt>
+                      <dd>{data.supplier.address ?? "-"}</dd>
+                    </dl>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <Button
+                  variant="outline"
+                  className="mt-2 w-full justify-start"
+                  onClick={() => setView("history")}
+                >
+                  <History className="mr-2 h-4 w-4" />
+                  Bewegungshistorie
+                </Button>
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
+                  onClick={() => setView("info")}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                Bewegungshistorie
+              </DialogTitle>
+              <DialogDescription>
+                Letzte Bestandsbewegungen für {data?.name}
+              </DialogDescription>
+            </DialogHeader>
+
+            {data && <ProductMovementHistory productId={data.id} />}
+          </>
         )}
       </DialogContent>
     </Dialog>

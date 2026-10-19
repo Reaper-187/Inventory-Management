@@ -25,6 +25,7 @@ export const StockMovementPage = () => {
         query={{ ...filters, page, limit }}
         page={page}
         onPageChange={setPage}
+        variant="full"
       />
     </>
   );

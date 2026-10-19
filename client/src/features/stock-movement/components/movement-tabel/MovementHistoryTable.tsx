@@ -13,19 +13,20 @@ import type { QueryMovement } from "../../types/stockMovements.api.types";
 import { useGetMovements } from "../../hooks/useGetMovements";
 import { StockMovementDialog } from "../form/StockMovementDialog";
 import { useState } from "react";
-import { DropdownMenuContent } from "@/components/ui/dropdown-menu";
-import { BarChart3, Plus, RotateCw } from "lucide-react";
+import { RotateCw } from "lucide-react";
 
 interface MovementHistoryTableProps {
   query: QueryMovement;
   page: number;
   onPageChange: (page: number) => void;
+  variant?: "full" | "embedded";
 }
 
 export const MovementHistoryTable = ({
   query,
   page,
   onPageChange,
+  variant = "full",
 }: MovementHistoryTableProps) => {
   const { data: response, isPending } = useGetMovements(query);
   const movements = response?.data;
@@ -43,19 +44,31 @@ export const MovementHistoryTable = ({
     );
   }
 
+  if (!movements || movements.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-5 text-sm text-muted-foreground">
+        Keine Bewegungen gefunden
+      </div>
+    );
+  }
+
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Datum</TableHead>
-            <TableHead>Produkt</TableHead>
-            <TableHead className="hidden md:table-cell">SKU</TableHead>
+            {variant === "full" && (
+              <>
+                <TableHead>Produkt</TableHead>
+                <TableHead className="hidden md:table-cell">SKU</TableHead>
+              </>
+            )}
             <TableHead>Typ</TableHead>
             <TableHead className="hidden md:table-cell">Grund</TableHead>
             <TableHead>Menge</TableHead>
             <TableHead className="hidden lg:table-cell">Notiz</TableHead>
-            <TableHead>Aktionen</TableHead>
+            {variant === "full" && <TableHead>Aktionen</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -64,10 +77,14 @@ export const MovementHistoryTable = ({
               <TableCell className="font-medium">
                 {movement.occurredAt.toLocaleDateString()}
               </TableCell>
-              <TableCell>{movement.product.name}</TableCell>
-              <TableCell className="hidden md:table-cell">
-                {movement.product.sku}
-              </TableCell>
+              {variant === "full" && (
+                <>
+                  <TableCell>{movement.product.name}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {movement.product.sku}
+                  </TableCell>
+                </>
+              )}
               <TableCell>
                 <MovementTypeBadge type={movement.type} />
               </TableCell>
@@ -81,45 +98,48 @@ export const MovementHistoryTable = ({
               <TableCell className="hidden lg:table-cell text-muted-foreground">
                 {movement.note ?? "-"}
               </TableCell>
-              <TableCell>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Neue Bewegung für dieses Produkt"
-                  onClick={() => setRebookProductId(movement.productId)}
-                >
-                  <RotateCw size={15} />
-                </Button>
-              </TableCell>
+              {variant === "full" && (
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Neue Bewegung für dieses Produkt"
+                    onClick={() => setRebookProductId(movement.productId)}
+                  >
+                    <RotateCw size={15} />
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-between p-2">
-        <span className="text-sm text-muted-foreground">
-          Page {meta?.page} of {meta?.totalPages}
-        </span>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            onClick={() => onPageChange(page - 1)}
-          >
-            Previous
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!meta || page >= meta.totalPages}
-            onClick={() => onPageChange(page + 1)}
-          >
-            Next
-          </Button>
+      {variant === "full" && (
+        <div className="flex items-center justify-between p-2">
+          <span className="text-sm text-muted-foreground">
+            Page {meta?.page} of {meta?.totalPages}
+          </span>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => onPageChange(page - 1)}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!meta || page >= meta.totalPages}
+              onClick={() => onPageChange(page + 1)}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {rebookProductId && (
         <StockMovementDialog
