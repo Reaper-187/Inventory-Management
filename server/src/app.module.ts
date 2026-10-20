@@ -3,9 +3,9 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { CategoriesModule } from './categories/categories.module.js';
 import { SuppliersModule } from './suppliers/suppliers.module.js';
 import { ProductsModule } from './products/products.module.js';
+import { StockMovementsModule } from './stock-movements/stock-movements.module.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { StockMovementsModule } from './stock-movements/stock-movements.module.js';
 
 @Module({
   imports: [
