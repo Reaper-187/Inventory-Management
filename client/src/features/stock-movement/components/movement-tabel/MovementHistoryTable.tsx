@@ -13,7 +13,14 @@ import type { QueryMovement } from "../../types/stockMovements.api.types";
 import { useGetMovements } from "../../hooks/useGetMovements";
 import { StockMovementDialog } from "../form/StockMovementDialog";
 import { useState } from "react";
-import { RotateCw } from "lucide-react";
+import { Info, MoreHorizontalIcon, RotateCw } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ProductionInfoModal } from "@/features/products/components/modal/ProductInfoModal";
 
 interface MovementHistoryTableProps {
   query: QueryMovement;
@@ -33,6 +40,7 @@ export const MovementHistoryTable = ({
   const meta = response?.meta;
 
   const [rebookProductId, setRebookProductId] = useState<string | null>(null);
+  const [productInfoId, setProductInfoId] = useState<string | null>(null);
 
   if (isPending) {
     return (
@@ -67,8 +75,12 @@ export const MovementHistoryTable = ({
             <TableHead>Typ</TableHead>
             <TableHead className="hidden md:table-cell">Grund</TableHead>
             <TableHead>Menge</TableHead>
-            <TableHead className="hidden lg:table-cell">Notiz</TableHead>
-            {variant === "full" && <TableHead>Aktionen</TableHead>}
+            {variant === "full" && (
+              <>
+                <TableHead className="hidden lg:table-cell">Notiz</TableHead>
+                <TableHead>Aktionen</TableHead>
+              </>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -91,24 +103,57 @@ export const MovementHistoryTable = ({
               <TableCell className="hidden md:table-cell">
                 {movement.reason}
               </TableCell>
-              <TableCell>
+              <TableCell
+                className={
+                  movement.type === "IN" ? "text-green-500" : "text-red-500"
+                }
+              >
                 {movement.type === "IN" ? "+" : "-"}
                 {movement.quantity}
               </TableCell>
-              <TableCell className="hidden lg:table-cell text-muted-foreground">
-                {movement.note ?? "-"}
-              </TableCell>
               {variant === "full" && (
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    title="Neue Bewegung für dieses Produkt"
-                    onClick={() => setRebookProductId(movement.productId)}
-                  >
-                    <RotateCw size={15} />
-                  </Button>
-                </TableCell>
+                <>
+                  <TableCell className="hidden lg:table-cell text-muted-foreground">
+                    {movement.note ?? "-"}
+                  </TableCell>
+                  <TableCell className="cursor-pointer pl-6">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                          >
+                            <MoreHorizontalIcon />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        }
+                      />
+
+                      <DropdownMenuContent align="center">
+                        <Button
+                          className="w-full flex justify-self-center"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setProductInfoId(movement.productId)}
+                        >
+                          <Info size={15} />
+                        </Button>
+
+                        <DropdownMenuSeparator />
+                        <Button
+                          className="w-full flex justify-self-center"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setRebookProductId(movement.productId)}
+                        >
+                          <RotateCw size={15} />
+                        </Button>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </>
               )}
             </TableRow>
           ))}
@@ -146,6 +191,14 @@ export const MovementHistoryTable = ({
           open={true}
           onOpenChange={(open) => !open && setRebookProductId(null)}
           defaultProductId={rebookProductId}
+        />
+      )}
+
+      {productInfoId && (
+        <ProductionInfoModal
+          prodId={productInfoId}
+          open={!!productInfoId}
+          onOpenChange={(open) => !open && setProductInfoId(null)}
         />
       )}
     </>
