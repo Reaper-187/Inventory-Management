@@ -8,7 +8,7 @@ import {
 } from "../types/stockMovements.api.types";
 import { apiClient } from "@/components/shared/api/apiClient";
 
-const STOCK_MOVEMENTS_API = `/stock-movements`;
+const STOCK_MOVEMENTS_API = `/api/stock-movements`;
 
 const toEndOfDay = (date?: string) =>
   date ? `${date}T23:59:59.999` : undefined;
