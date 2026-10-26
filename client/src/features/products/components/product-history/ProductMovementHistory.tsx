@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MovementHistoryTable } from "@/features/stock-movement/components/movement-tabel/MovementHistoryTable";
+import { MovementHistoryTable } from "@/features/stock-movement";
 
 interface ProductMovementHistoryProps {
   productId: string;

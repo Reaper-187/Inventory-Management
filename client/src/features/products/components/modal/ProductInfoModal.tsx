@@ -21,9 +21,11 @@ interface ProductionInfoModalProps {
   prodId?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  showHistory?: boolean;
 }
 
 export const ProductionInfoModal = ({
+  showHistory = true,
   prodId,
   open,
   onOpenChange,
@@ -135,14 +137,16 @@ export const ProductionInfoModal = ({
                   </CollapsibleContent>
                 </Collapsible>
 
-                <Button
-                  variant="outline"
-                  className="mt-2 w-full justify-start"
-                  onClick={() => setView("history")}
-                >
-                  <History className="mr-2 h-4 w-4" />
-                  Bewegungshistorie
-                </Button>
+                {showHistory && (
+                  <Button
+                    variant="outline"
+                    className="mt-2 w-full justify-start"
+                    onClick={() => setView("history")}
+                  >
+                    <History className="mr-2 h-4 w-4" />
+                    Bewegungshistorie
+                  </Button>
+                )}
               </>
             )}
           </>
@@ -165,7 +169,9 @@ export const ProductionInfoModal = ({
               </DialogDescription>
             </DialogHeader>
 
-            {data && <ProductMovementHistory productId={data.id} />}
+            {data && showHistory && (
+              <ProductMovementHistory productId={data.id} />
+            )}
           </>
         )}
       </DialogContent>

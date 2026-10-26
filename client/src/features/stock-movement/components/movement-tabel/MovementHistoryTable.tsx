@@ -198,6 +198,7 @@ export const MovementHistoryTable = ({
         <ProductionInfoModal
           prodId={productInfoId}
           open={!!productInfoId}
+          showHistory={false}
           onOpenChange={(open) => !open && setProductInfoId(null)}
         />
       )}
