@@ -39,17 +39,17 @@ model Supplier {
 }
 
 model Product {
-  id           String  @id @default(uuid()) @db.Uuid
-  name         String  @db.VarChar(100)
-  sku          String  @unique @db.VarChar(50)
-  description  String? @db.VarChar(500)
-  price        Decimal @db.Decimal(10, 2)
-  imageUrl     String? @db.VarChar(500)
-  minStock     Int     @default(0)
-  currentStock Int     @default(0)
-
-  categoryId String   @db.Uuid
-  category   Category @relation(fields: [categoryId], references: [id])
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String   @db.VarChar(100)
+  sku           String   @unique @db.VarChar(50)
+  description   String?  @db.VarChar(500)
+  salePrice     Decimal  @db.Decimal(10, 2)
+  imageUrl      String?  @db.VarChar(500)
+  minStock      Int      @default(0)
+  currentStock  Int      @default(0)
+  purchasePrice Decimal  @db.Decimal(10, 2)
+  categoryId    String   @db.Uuid
+  category      Category @relation(fields: [categoryId], references: [id])
 
   supplierId String   @db.Uuid
   supplier   Supplier @relation(fields: [supplierId], references: [id])
@@ -80,18 +80,19 @@ enum MovementReason {
 }
 
 model StockMovement {
-  id         String         @id @default(uuid())
-  productId  String
-  product    Product        @relation(fields: [productId], references: [id])
-  type       MovementType
-  reason     MovementReason
-  quantity   Int
-  note       String?
-  salePrice  Decimal?       @db.Decimal(10, 2)
-  occurredAt DateTime       @default(now())
-  createdAt  DateTime       @default(now())
+  id            String         @id @default(uuid()) @db.Uuid
+  productId     String         @db.Uuid
+  product       Product        @relation(fields: [productId], references: [id])
+  type          MovementType
+  reason        MovementReason
+  quantity      Int
+  note          String?
+  salePrice     Decimal?       @db.Decimal(10, 2)
+  purchasePrice Decimal?       @db.Decimal(10, 2)
+  occurredAt    DateTime       @default(now())
+  createdAt     DateTime       @default(now())
 
-  @@index([productId]) // Ohne @@index ihn muss die DB bei WHERE jede Zeile der Tabelle durchsuchen
+  @@index([productId])
   @@index([occurredAt])
   @@map("stock_movements")
 }

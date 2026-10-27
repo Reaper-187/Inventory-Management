@@ -785,10 +785,11 @@ export const ProductScalarFieldEnum = {
   name: 'name',
   sku: 'sku',
   description: 'description',
-  price: 'price',
+  salePrice: 'salePrice',
   imageUrl: 'imageUrl',
   minStock: 'minStock',
   currentStock: 'currentStock',
+  purchasePrice: 'purchasePrice',
   categoryId: 'categoryId',
   supplierId: 'supplierId',
   createdAt: 'createdAt',
@@ -806,6 +807,7 @@ export const StockMovementScalarFieldEnum = {
   quantity: 'quantity',
   note: 'note',
   salePrice: 'salePrice',
+  purchasePrice: 'purchasePrice',
   occurredAt: 'occurredAt',
   createdAt: 'createdAt'
 } as const
