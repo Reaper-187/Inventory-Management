@@ -81,7 +81,7 @@ export const StockMovementDialog = ({
 
   useEffect(() => {
     if (reason === "SALE" && selectedProduct && !dirtyFields.salePrice) {
-      setValue("salePrice", selectedProduct.price);
+      setValue("salePrice", selectedProduct.salePrice);
     }
   }, [reason, selectedProduct]);
 

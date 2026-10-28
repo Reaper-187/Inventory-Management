@@ -57,7 +57,8 @@ export const ProductDialog = (props: DialogType) => {
     defaultValues: {
       name: "",
       description: "",
-      price: 0,
+      salePrice: 0,
+      purchasePrice: 0,
       minStock: 0,
       currentStock: 1,
       categoryId: "",
@@ -70,7 +71,8 @@ export const ProductDialog = (props: DialogType) => {
       reset({
         name: initialFetchData.name,
         description: initialFetchData.description ?? "",
-        price: initialFetchData.price,
+        salePrice: initialFetchData.salePrice,
+        purchasePrice: initialFetchData.purchasePrice,
         minStock: initialFetchData.minStock,
         currentStock: initialFetchData.currentStock,
         categoryId: initialFetchData.categoryId,
@@ -241,88 +243,130 @@ export const ProductDialog = (props: DialogType) => {
               )}
             />
 
-            <Controller
-              name="price"
-              control={control}
-              render={({ field }) => (
-                <Field>
-                  <Label htmlFor="price">Preis</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    disabled={pendingType}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        clampNonNegativeNumber(e.target.valueAsNumber, 0),
-                      )
-                    }
-                    className={errors.price ? "border-destructive" : ""}
-                  />
-                  {errors.price && (
-                    <p className="text-sm text-destructive">
-                      {errors.price.message}
-                    </p>
-                  )}
-                </Field>
-              )}
-            />
+            <div className="flex gap-5">
+              <Controller
+                name="purchasePrice"
+                control={control}
+                render={({ field }) => (
+                  <Field>
+                    <Label htmlFor="purchasePrice">Einkaufspreis</Label>
+                    <Input
+                      id="purchasePrice"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      disabled={pendingType}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          clampNonNegativeNumber(e.target.valueAsNumber, 0),
+                        )
+                      }
+                      className={
+                        errors.purchasePrice ? "border-destructive" : ""
+                      }
+                    />
+                    {errors.purchasePrice && (
+                      <p className="text-sm text-destructive">
+                        {errors.purchasePrice.message}
+                      </p>
+                    )}
+                    {props.mode === "edit" && (
+                      <p className="text-sm text-destructive">
+                        Dies gilt dann nur für Zukünftige Einkäufe !
+                      </p>
+                    )}
+                  </Field>
+                )}
+              />
 
-            <Controller
-              name="minStock"
-              control={control}
-              render={({ field }) => (
-                <Field>
-                  <Label htmlFor="minStock">Mindestbestand</Label>
-                  <Input
-                    id="minStock"
-                    type="number"
-                    disabled={pendingType}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        clampNonNegativeNumber(e.target.valueAsNumber, 0),
-                      )
-                    }
-                    className={errors.minStock ? "border-destructive" : ""}
-                  />
-                  {errors.minStock && (
-                    <p className="text-sm text-destructive">
-                      {errors.minStock.message}
-                    </p>
-                  )}
-                </Field>
-              )}
-            />
+              <Controller
+                name="salePrice"
+                control={control}
+                render={({ field }) => (
+                  <Field>
+                    <Label htmlFor="salePrice">Verkaufspreis</Label>
+                    <Input
+                      id="salePrice"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      disabled={pendingType}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          clampNonNegativeNumber(e.target.valueAsNumber, 0),
+                        )
+                      }
+                      className={errors.salePrice ? "border-destructive" : ""}
+                    />
+                    {errors.salePrice && (
+                      <p className="text-sm text-destructive">
+                        {errors.salePrice.message}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
 
-            <Controller
-              name="currentStock"
-              control={control}
-              render={({ field }) => (
-                <Field>
-                  <Label htmlFor="currentStock">Aktueller Bestand</Label>
-                  <Input
-                    id="currentStock"
-                    type="number"
-                    disabled={pendingType}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        clampNonNegativeNumber(e.target.valueAsNumber, 0),
-                      )
-                    }
-                    className={errors.currentStock ? "border-destructive" : ""}
-                  />
-                  {errors.currentStock && (
-                    <p className="text-sm text-destructive">
-                      {errors.currentStock.message}
-                    </p>
-                  )}
-                </Field>
-              )}
-            />
+            <div className="flex gap-5">
+              <Controller
+                name="minStock"
+                control={control}
+                render={({ field }) => (
+                  <Field>
+                    <Label htmlFor="minStock">Mindestbestand</Label>
+                    <Input
+                      id="minStock"
+                      type="number"
+                      disabled={pendingType}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          clampNonNegativeNumber(e.target.valueAsNumber, 0),
+                        )
+                      }
+                      className={errors.minStock ? "border-destructive" : ""}
+                    />
+                    {errors.minStock && (
+                      <p className="text-sm text-destructive">
+                        {errors.minStock.message}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="currentStock"
+                control={control}
+                render={({ field }) => (
+                  <Field>
+                    <Label htmlFor="currentStock">Aktueller Bestand</Label>
+                    <Input
+                      id="currentStock"
+                      type="number"
+                      disabled={pendingType}
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          clampNonNegativeNumber(e.target.valueAsNumber, 0),
+                        )
+                      }
+                      className={
+                        errors.currentStock ? "border-destructive" : ""
+                      }
+                    />
+                    {errors.currentStock && (
+                      <p className="text-sm text-destructive">
+                        {errors.currentStock.message}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
 
             <Field>
               <Label htmlFor="image">Produktbild</Label>

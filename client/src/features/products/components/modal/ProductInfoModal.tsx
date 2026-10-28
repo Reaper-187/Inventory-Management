@@ -66,12 +66,14 @@ export const ProductionInfoModal = ({
                 </dt>
                 <dd>{data.description ?? "-"}</dd>
 
-                <dt className="font-medium text-muted-foreground">Preis</dt>
+                <dt className="font-medium text-muted-foreground">
+                  Verkaufspreis
+                </dt>
                 <dd>
                   {new Intl.NumberFormat("de-DE", {
                     style: "currency",
                     currency: "EUR",
-                  }).format(data.price)}
+                  }).format(data.salePrice)}
                 </dd>
 
                 <dt className="font-medium text-muted-foreground">

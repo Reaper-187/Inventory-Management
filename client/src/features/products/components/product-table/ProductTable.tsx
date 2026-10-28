@@ -78,8 +78,9 @@ export const ProductTable = ({
             <TableHead>Name</TableHead>
             <TableHead className="hidden md:table-cell">SKU</TableHead>
             <TableHead className="hidden md:table-cell">Category</TableHead>
-            <TableHead>Stock</TableHead>
-            <TableHead>Price</TableHead>
+            <TableHead>Einkaufspreis</TableHead>
+            <TableHead>Verkaufspreis</TableHead>
+            <TableHead>Bestand</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -121,13 +122,14 @@ export const ProductTable = ({
               <TableCell className="hidden md:table-cell">
                 {product.category.name}
               </TableCell>
+              <TableCell>{product.purchasePrice} €</TableCell>
+              <TableCell>{product.salePrice} €</TableCell>
               <TableCell>
                 <StockLevelBadge
                   currentStock={product.currentStock}
                   minStock={product.minStock}
                 />
               </TableCell>
-              <TableCell>{product.price} €</TableCell>
 
               <TableCell className="cursor-pointer pl-6">
                 <DropdownMenu>
