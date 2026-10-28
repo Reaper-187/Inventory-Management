@@ -14,7 +14,7 @@ export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()
@@ -24,7 +24,12 @@ export class CreateProductDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   @Type(() => Number)
-  price: number;
+  salePrice!: number;
+
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Type(() => Number)
+  purchasePrice!: number;
 
   @IsOptional()
   @IsUrl()
@@ -40,11 +45,11 @@ export class CreateProductDto {
   @IsNumber()
   @Min(0)
   @Type(() => Number)
-  currentStock: number;
+  currentStock!: number;
 
   @IsUUID()
-  categoryId: string;
+  categoryId!: string;
 
   @IsUUID()
-  supplierId: string;
+  supplierId!: string;
 }
