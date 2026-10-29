@@ -20,7 +20,7 @@ export class ProductsService {
   async findAll(query: QueryProductDto) {
     const { search, categoryId, supplierId, lowStock, page, limit } = query;
 
-    const where: Prisma.ProductWhereInput = {};
+    const where: Prisma.ProductWhereInput = { archivedAt: null };
 
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
@@ -72,7 +72,7 @@ export class ProductsService {
 
   async findOne(id: string): Promise<Product> {
     const prodInDb = await this.prisma.product.findUnique({
-      where: { id },
+      where: { id, archivedAt: null },
       include: {
         category: true,
         supplier: true,
@@ -185,10 +185,20 @@ export class ProductsService {
   async remove(id: string): Promise<Product> {
     const product = await this.findOne(id);
 
-    if (product.imageUrl) await this.deleteImageFile(product.imageUrl);
-
-    return await this.prisma.product.delete({
-      where: { id },
+    const hasMovements = await this.prisma.stockMovement.findFirst({
+      where: { productId: id },
+      select: { id: true },
     });
+
+    if (hasMovements) {
+      return await this.prisma.product.update({
+        where: { id },
+        data: { archivedAt: new Date() },
+      });
+    }
+
+    const deleted = await this.prisma.product.delete({ where: { id } });
+    if (product.imageUrl) await this.deleteImageFile(product.imageUrl);
+    return deleted;
   }
 }

@@ -30,6 +30,7 @@ export const StockMovementSchema = z.object({
   quantity: z.number(),
   note: z.string().nullable(),
   salePrice: z.coerce.number().nullable(), // Prisma sendet Decimal als JSON-String daher coerce in number
+  purchasePrice: z.coerce.number().nullable(),
   occurredAt: z.coerce.date(),
   createdAt: z.coerce.date(),
 });

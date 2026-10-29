@@ -42,8 +42,12 @@ export class StockMovementsService {
       const updateResult = await tx.product.updateMany({
         where:
           type === MovementType.OUT
-            ? { id: productId, currentStock: { gte: quantity } } // nur wenn genug Bestand da ist
-            : { id: productId },
+            ? {
+                id: productId,
+                archivedAt: null,
+                currentStock: { gte: quantity },
+              } // nur wenn genug Bestand da ist
+            : { id: productId, archivedAt: null },
         data: {
           currentStock:
             type === MovementType.IN
@@ -58,16 +62,32 @@ export class StockMovementsService {
       if (updateResult.count === 0) {
         const productExists = await tx.product.findUnique({
           where: { id: productId },
-          select: { id: true },
+          select: { id: true, archivedAt: true },
         });
 
         if (!productExists) {
           throw new NotFoundException('Produkt nicht gefunden');
         }
+        if (productExists.archivedAt) {
+          throw new ConflictException(
+            'Für archivierte Produkte können keine Bewegungen gebucht werden',
+          );
+        }
         throw new ConflictException(
           'Bestand reicht für diese Buchung nicht aus',
         );
       }
+
+      // Snapshot also Einkaufspreis zum Zeitpunkt der Buchung (nur im Einkauf)
+      const purchasePrice =
+        reason === MovementReason.PURCHASE
+          ? (
+              await tx.product.findUniqueOrThrow({
+                where: { id: productId },
+                select: { purchasePrice: true },
+              })
+            ).purchasePrice
+          : undefined;
 
       return tx.stockMovement.create({
         data: {
@@ -77,6 +97,7 @@ export class StockMovementsService {
           quantity,
           note,
           salePrice,
+          purchasePrice,
           occurredAt: occurredAt ? new Date(occurredAt) : undefined,
         },
         include: {
