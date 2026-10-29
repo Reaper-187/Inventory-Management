@@ -56,8 +56,9 @@ model Product {
 
   movements StockMovement[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
 
   @@map("products")
 }
