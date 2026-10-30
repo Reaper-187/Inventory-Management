@@ -19,6 +19,7 @@ export const ProductSchema = z.object({
   supplier: supplierSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  archivedAt: z.coerce.date().nullable(),
 });
 
 export type Product = z.infer<typeof ProductSchema>;
@@ -47,6 +48,7 @@ export const QueryProductSchema = z.object({
   lowStock: z.boolean().optional(),
   page: z.number().min(1).optional(),
   limit: z.number().min(1).optional(),
+  status: z.enum(["active", "archived", "all"]).optional(),
 });
 
 export type QueryProduct = z.infer<typeof QueryProductSchema>;

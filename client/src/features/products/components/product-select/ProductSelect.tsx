@@ -22,6 +22,7 @@ export const ProductSelect = ({
 
   return (
     <SelectComp
+      classes="w-full"
       items={items}
       value={value ?? ""}
       onChange={onChange}

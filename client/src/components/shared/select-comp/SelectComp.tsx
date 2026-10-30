@@ -19,6 +19,7 @@ interface SelectCompProps {
   placeholder?: string;
   disabled?: boolean;
   isLoading?: boolean;
+  classes: string;
 }
 
 export const SelectComp = ({
@@ -28,6 +29,7 @@ export const SelectComp = ({
   placeholder = "Auswählen",
   disabled = false,
   isLoading = false,
+  classes = "",
 }: SelectCompProps) => {
   const selectedLabel = items.find((item) => item.value === value)?.label;
   return (
@@ -36,7 +38,7 @@ export const SelectComp = ({
       onValueChange={onChange}
       disabled={disabled || isLoading}
     >
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={classes}>
         <SelectValue placeholder={isLoading ? "Wird geladen..." : placeholder}>
           {selectedLabel}
         </SelectValue>

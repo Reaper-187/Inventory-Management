@@ -3,18 +3,24 @@ import type { QueryProduct } from "../../types/product.api.types";
 import { SupplierDropdown } from "@/features/suppliers";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SelectComp } from "@/components/shared/select-comp/SelectComp";
 
 interface ProductFiltersProps {
   filters: Omit<QueryProduct, "page" | "limit">;
   onFiltersChange: (filters: Omit<QueryProduct, "page" | "limit">) => void;
 }
 
+const STATUS_OPTIONS = [
+  { value: "active", label: "Aktive Produkte" },
+  { value: "all", label: "Aktive + archivierte" },
+  { value: "archived", label: "Nur archivierte" },
+];
+
 export const ProductFilters = ({
   filters,
   onFiltersChange,
 }: ProductFiltersProps) => {
   const handleCategoryChange = (categoryId: string[]) => {
-    console.log("categoryId", categoryId);
     onFiltersChange({
       ...filters,
       categoryId,
@@ -22,7 +28,6 @@ export const ProductFilters = ({
   };
 
   const handleSupplierChange = (supplierId: string[]) => {
-    console.log("supplierId", supplierId);
     onFiltersChange({
       ...filters,
       supplierId,
@@ -57,11 +62,23 @@ export const ProductFilters = ({
         value={filters.supplierId ?? []}
         onChange={handleSupplierChange}
       />
+      <SelectComp
+        classes="w-fit"
+        value={filters.status ?? "active"}
+        onChange={(value) =>
+          onFiltersChange({
+            ...filters,
+            status: value as QueryProduct["status"],
+          })
+        }
+        items={STATUS_OPTIONS}
+      />
 
       <div className="flex items-center gap-1">
         <Checkbox
           checked={filters.lowStock ?? false}
           onCheckedChange={handleLowStockChange}
+          disabled={(filters.status ?? "active") !== "active"}
           name="Low-on-Stock"
         />
         <p>Low-on-Stock</p>
