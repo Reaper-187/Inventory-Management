@@ -76,10 +76,15 @@ export const ProductFilters = ({
 
       <div className="flex items-center gap-1">
         <Checkbox
-          checked={filters.lowStock ?? false}
+          checked={(filters.lowStock ?? false) && filters.status === "active"}
           onCheckedChange={handleLowStockChange}
           disabled={(filters.status ?? "active") !== "active"}
           name="Low-on-Stock"
+          className={
+            filters.status !== "active"
+              ? "cursor-not-allowed"
+              : "cursor-pointer"
+          }
         />
         <p>Low-on-Stock</p>
       </div>

@@ -15,6 +15,7 @@ export const TypeBadgeSelect = ({ value, onChange }: TypeBadgeSelectProps) => {
   return (
     <div className="w-full md:w-1/4 lg:w-1/5">
       <SelectComp
+        classes="w-full"
         items={TYPE_ITEMS}
         value={value}
         onChange={(value) => onChange(value as MovementType | "")}
