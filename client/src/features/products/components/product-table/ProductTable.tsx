@@ -13,7 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, Expand, Info, MoreHorizontalIcon, Trash2 } from "lucide-react";
+import {
+  Badge,
+  Edit,
+  Expand,
+  Info,
+  MoreHorizontalIcon,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetProducts } from "../../hooks/useGetProducts";
 import { StockLevelBadge } from "./StockLevelBadge";
@@ -44,14 +51,13 @@ export const ProductTable = ({
   const { data: response, isPending } = useGetProducts(query);
   const products = response?.data;
   const meta = response?.meta;
-
   const { mutate: deleteMutation, isPending: isDeleteing } = useDeleteProduct();
 
   const [editProdId, setEditProdId] = useState<string | null>(null);
   const [deleteProdId, setDeleteProdId] = useState<string | null>(null);
-  const [productImgId, setProductImgId] = useState<string | undefined>(
-    undefined,
-  );
+  const [productImg, setProductImg] = useState<
+    { imageUrl: string; name: string } | undefined
+  >(undefined);
   const [productInfoId, setProductInfoId] = useState<string | null>(null);
 
   if (isPending) {
@@ -85,97 +91,117 @@ export const ProductTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products?.map((product) => (
-            <TableRow key={product.id}>
-              <TableCell className="hidden lg:table-cell font-medium">
-                {product.imageUrl ? (
-                  <div
-                    className="relative w-12 h-12 md:w-20 md:h-20 cursor-pointer group"
-                    onClick={() => setProductImgId(product.id)}
-                  >
-                    <img
-                      className="w-12 h-12 md:w-20 md:h-20 border-1 border-black"
-                      src={`${IMG_BASE_URL}${product.imageUrl}`}
-                      alt="img"
-                    />
-                    <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
-                      <Expand
-                        className="
-                  text-primary
-                  ml-5
-                  w-3 h-3
-                  md:w-2.5 md:h-2.5
-                  md:group-hover:w-5 md:group-hover:h-5
-                  transition-all duration-200
-                "
+          {products?.map((product) => {
+            const isArchived = !!product.archivedAt;
+            const imageUrl = product.imageUrl;
+            return (
+              <TableRow
+                key={product.id}
+                className={isArchived ? "opacity-60" : undefined}
+              >
+                <TableCell className="hidden lg:table-cell font-medium">
+                  {imageUrl ? (
+                    <div
+                      className="relative w-12 h-12 md:w-20 md:h-20 cursor-pointer group"
+                      onClick={() =>
+                        setProductImg({ imageUrl, name: product.name })
+                      }
+                    >
+                      <img
+                        className="w-12 h-12 md:w-20 md:h-20 border-1 border-black"
+                        src={`${IMG_BASE_URL}${imageUrl}`}
+                        alt="img"
                       />
+                      <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                        <Expand
+                          className="
+                            text-primary
+                            ml-5
+                            w-3 h-3
+                            md:w-2.5 md:h-2.5
+                            md:group-hover:w-5 md:group-hover:h-5
+                            transition-all duration-200
+                          "
+                        />
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="w-12 h-12 md:w-20 md:h-20 bg-muted rounded" />
-                )}
-              </TableCell>
-              <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell className="hidden md:table-cell">
-                {product.sku}
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                {product.category.name}
-              </TableCell>
-              <TableCell>{product.purchasePrice} €</TableCell>
-              <TableCell>{product.salePrice} €</TableCell>
-              <TableCell>
-                <StockLevelBadge
-                  currentStock={product.currentStock}
-                  minStock={product.minStock}
-                />
-              </TableCell>
-
-              <TableCell className="cursor-pointer pl-6">
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button variant="ghost" size="icon" className="size-8">
-                        <MoreHorizontalIcon />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    }
+                  ) : (
+                    <div className="w-12 h-12 md:w-20 md:h-20 bg-muted rounded" />
+                  )}
+                </TableCell>
+                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {product.sku}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {product.category.name}
+                </TableCell>
+                <TableCell>{product.purchasePrice} €</TableCell>
+                <TableCell>{product.salePrice} €</TableCell>
+                <TableCell>
+                  <StockLevelBadge
+                    currentStock={product.currentStock}
+                    minStock={product.minStock}
                   />
-                  <DropdownMenuContent align="center">
-                    <Button
-                      className="w-full flex justify-self-center"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setProductInfoId(product.id)}
-                    >
-                      <Info size={15} />
-                    </Button>
+                </TableCell>
 
-                    <DropdownMenuSeparator />
-                    <Button
-                      className="w-full flex justify-self-center"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setEditProdId(product.id)}
-                    >
-                      <Edit size={15} />
-                    </Button>
+                <TableCell className="pl-6">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          disabled={isArchived}
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                        >
+                          <MoreHorizontalIcon />
+                          <span className="sr-only">Open menu</span>
+                        </Button>
+                      }
+                    />
+                    {isArchived ? (
+                      ""
+                    ) : (
+                      <>
+                        <DropdownMenuContent align="center">
+                          <Button
+                            className="w-full flex justify-self-center"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setProductInfoId(product.id)}
+                          >
+                            <Info size={15} />
+                          </Button>
 
-                    <DropdownMenuSeparator />
+                          <DropdownMenuSeparator />
+                          <Button
+                            className="w-full flex justify-self-center"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setEditProdId(product.id)}
+                          >
+                            <Edit size={15} />
+                          </Button>
 
-                    <Button
-                      className="w-full flex justify-self-center"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setDeleteProdId(product.id)}
-                    >
-                      <Trash2 color="red" size={15} />
-                    </Button>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
+                          <DropdownMenuSeparator />
+
+                          <Button
+                            className="w-full flex justify-self-center"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setDeleteProdId(product.id)}
+                          >
+                            <Trash2 color="red" size={15} />
+                          </Button>
+                        </DropdownMenuContent>
+                      </>
+                    )}
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 
@@ -228,8 +254,7 @@ export const ProductTable = ({
           onOpenChange={(open) => !open && setProductInfoId(null)}
         />
       )}
-
-      <ImgModal productId={productImgId} setProductId={setProductImgId} />
+      <ImgModal image={productImg} onClose={() => setProductImg(undefined)} />
     </>
   );
 };

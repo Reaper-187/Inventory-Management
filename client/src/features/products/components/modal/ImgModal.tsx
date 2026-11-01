@@ -4,15 +4,14 @@ import { useGetOneProduct } from "../../hooks/useGetOneProduct";
 const IMG_BASE_URL = `${import.meta.env.VITE_API_STATIC}/api`;
 
 interface ImgInfoProps {
-  productId: string | undefined;
-  setProductId: (id: string | undefined) => void;
+  image?: { imageUrl: string; name: string };
+  onClose: () => void;
 }
 
-export const ImgModal = ({ productId, setProductId }: ImgInfoProps) => {
-  const { data: product, isPending } = useGetOneProduct(productId);
+export const ImgModal = ({ image, onClose }: ImgInfoProps) => {
   return (
     <AnimatePresence>
-      {product?.imageUrl && (
+      {image && (
         <motion.div
           className="fixed inset-0 z-50 overflow-hidden"
           initial={{ opacity: 0 }}
@@ -26,7 +25,7 @@ export const ImgModal = ({ productId, setProductId }: ImgInfoProps) => {
             <div className="relative">
               <button
                 className="absolute -right-3 -top-3 z-10 rounded-full bg-black/80 p-2 text-white transition-colors hover:bg-black/60 md:-right-2 md:-top-2"
-                onClick={() => setProductId(undefined)}
+                onClick={onClose}
               >
                 <X className="h-5 w-5 md:h-6 md:w-6" />
               </button>
@@ -58,8 +57,8 @@ export const ImgModal = ({ productId, setProductId }: ImgInfoProps) => {
               >
                 <img
                   className="h-64 w-64 rounded-lg bg-white object-contain p-2 md:h-96 md:w-96 lg:h-full lg:w-full"
-                  src={`${IMG_BASE_URL}${product.imageUrl}`}
-                  alt={product.name}
+                  src={`${IMG_BASE_URL}${image.imageUrl}`}
+                  alt={image.name}
                 />
               </motion.div>
             </div>

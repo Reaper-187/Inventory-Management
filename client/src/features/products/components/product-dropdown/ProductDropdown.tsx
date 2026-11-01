@@ -7,12 +7,12 @@ interface ProductDropdownProps {
 }
 
 export const ProductDropdown = ({ value, onChange }: ProductDropdownProps) => {
-  const { data: response, isPending } = useGetProducts();
+  const { data: response, isPending } = useGetProducts({ status: "all" });
 
   const items =
     response?.data.map((product) => ({
       value: product.id,
-      label: product.name,
+      label: product.archivedAt ? `${product.name} (archiviert)` : product.name,
     })) ?? [];
 
   return (
