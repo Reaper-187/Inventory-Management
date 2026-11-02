@@ -19,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { QueryProductDto } from '../dtos/query-product.dto.js';
 import { imageFileFilter } from '../utils/file-filter.utils.js';
 import { productImageStorage } from '../utils/storage.utils.js';
+import { QueryProductOptionsDto } from '../dtos/query-product-options.dto.js';
 
 @Controller('products')
 export class ProductsController {
@@ -26,6 +27,11 @@ export class ProductsController {
   @Get()
   findAll(@Query() query: QueryProductDto) {
     return this.productsService.findAll(query);
+  }
+
+  @Get('options')
+  findOptions(@Query() query: QueryProductOptionsDto) {
+    return this.productsService.findOptions(query.status);
   }
 
   @Get(':id')

@@ -52,3 +52,11 @@ export const QueryProductSchema = z.object({
 });
 
 export type QueryProduct = z.infer<typeof QueryProductSchema>;
+
+export const ProductOptionSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  archivedAt: z.coerce.date().nullable(),
+});
+
+export type ProductOption = z.infer<typeof ProductOptionSchema>;

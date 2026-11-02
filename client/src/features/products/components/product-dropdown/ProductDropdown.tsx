@@ -1,5 +1,5 @@
 import { MultiSelectDropdown } from "@/components/shared/dropdown-comp/MultiSelectDropdown";
-import { useGetProducts } from "../../hooks/useGetProducts";
+import { useGetProductOptions } from "../../hooks/useGetProductOptions";
 
 interface ProductDropdownProps {
   value: string[];
@@ -7,10 +7,10 @@ interface ProductDropdownProps {
 }
 
 export const ProductDropdown = ({ value, onChange }: ProductDropdownProps) => {
-  const { data: response, isPending } = useGetProducts({ status: "all" });
+  const { data: options, isPending } = useGetProductOptions("all");
 
   const items =
-    response?.data.map((product) => ({
+    options?.map((product) => ({
       value: product.id,
       label: product.archivedAt ? `${product.name} (archiviert)` : product.name,
     })) ?? [];

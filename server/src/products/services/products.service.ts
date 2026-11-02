@@ -11,16 +11,17 @@ import { Prisma, Product } from '../../generated/prisma/client.js';
 import { buildSkuCandidate, buildSkuPrefix } from '../utils/sku.utils.js';
 import { join } from 'node:path';
 import { unlink } from 'node:fs/promises';
-import { QueryProductDto } from '../dtos/query-product.dto.js';
+import { ProductStatus, QueryProductDto } from '../dtos/query-product.dto.js';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(query: QueryProductDto) {
-    const { search, categoryId, supplierId, lowStock, page, limit } = query;
+    const { search, categoryId, supplierId, status, lowStock, page, limit } =
+      query;
 
-    const where: Prisma.ProductWhereInput = { archivedAt: null };
+    const where: Prisma.ProductWhereInput = {};
 
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
@@ -30,6 +31,13 @@ export class ProductsService {
     }
     if (supplierId?.length) {
       where.supplierId = { in: supplierId };
+    }
+
+    if (status === ProductStatus.ACTIVE) {
+      where.archivedAt = null;
+    }
+    if (status === ProductStatus.ARCHIVED) {
+      where.archivedAt = { not: null };
     }
 
     if (!lowStock) {
@@ -68,6 +76,23 @@ export class ProductsService {
       data,
       meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
     };
+  }
+
+  async findOptions(status: ProductStatus) {
+    const where: Prisma.ProductWhereInput = {};
+
+    if (status === ProductStatus.ACTIVE) {
+      where.archivedAt = null;
+    }
+    if (status === ProductStatus.ARCHIVED) {
+      where.archivedAt = { not: null };
+    }
+
+    return this.prisma.product.findMany({
+      where,
+      select: { id: true, name: true, archivedAt: true },
+      orderBy: { name: 'asc' },
+    });
   }
 
   async findOne(id: string): Promise<Product> {

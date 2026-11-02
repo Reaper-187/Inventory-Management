@@ -1,19 +1,22 @@
-import axios from "axios";
 import qs from "qs";
-import type {
-  CreateProduct,
-  Product,
-  QueryProduct,
-  UpdateProduct,
+import {
+  ProductOptionSchema,
+  type CreateProduct,
+  type Product,
+  type ProductOption,
+  type QueryProduct,
+  type UpdateProduct,
 } from "../types/product.api.types";
 import type { PaginationMeta } from "@/components/shared/api/pagination.types";
+import { apiClient } from "@/components/shared/api/apiClient";
+import z from "zod";
 
-const PRODUCTS_API = `${import.meta.env.VITE_API_STATIC}/api/products`;
+const PRODUCTS_API = `/api/products`;
 
 export const getProducts = async (
   query?: QueryProduct,
 ): Promise<{ data: Product[]; meta: PaginationMeta }> => {
-  const response = await axios.get(PRODUCTS_API, {
+  const response = await apiClient.get(PRODUCTS_API, {
     params: query,
     // Axios serialisiert Arrays immer mit eckigen Klammern
     // (categoryId[]=x), das Backend/qs erwartet aber categoryId=x&categoryId=y
@@ -24,13 +27,23 @@ export const getProducts = async (
   return response.data;
 };
 
+export const getProductOptions = async (
+  status: QueryProduct["status"],
+): Promise<ProductOption[]> => {
+  const { data } = await apiClient.get(`${PRODUCTS_API}/options`, {
+    params: { status },
+  });
+  // z.array convertiert data zu liste und .parse prüft den res
+  return z.array(ProductOptionSchema).parse(data);
+};
+
 export const getOneProduct = async (id: string): Promise<Product> => {
-  const response = await axios.get<Product>(`${PRODUCTS_API}/${id}`);
+  const response = await apiClient.get<Product>(`${PRODUCTS_API}/${id}`);
   return response.data;
 };
 
 export const createProduct = async (data: CreateProduct): Promise<Product> => {
-  const response = await axios.post<Product>(PRODUCTS_API, data, {
+  const response = await apiClient.post<Product>(PRODUCTS_API, data, {
     withCredentials: true,
   });
   return response.data;
@@ -40,12 +53,15 @@ export const updateProduct = async (
   id: string,
   data: UpdateProduct,
 ): Promise<Product> => {
-  const response = await axios.patch<Product>(`${PRODUCTS_API}/${id}`, data);
+  const response = await apiClient.patch<Product>(
+    `${PRODUCTS_API}/${id}`,
+    data,
+  );
   return response.data;
 };
 
 export const deleteProduct = async (id: string): Promise<Product> => {
-  const response = await axios.delete<Product>(`${PRODUCTS_API}/${id}`);
+  const response = await apiClient.delete<Product>(`${PRODUCTS_API}/${id}`);
   return response.data;
 };
 
@@ -55,7 +71,7 @@ export const uploadProductImage = async (
 ): Promise<Product> => {
   const formData = new FormData();
   formData.append("image", file);
-  const response = await axios.post<Product>(
+  const response = await apiClient.post<Product>(
     `${PRODUCTS_API}/${id}/image`,
     formData,
     { headers: { "Content-Type": "multipart/form-data" } },

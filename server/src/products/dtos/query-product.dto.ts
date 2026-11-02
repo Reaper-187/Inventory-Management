@@ -2,6 +2,7 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
@@ -9,10 +10,20 @@ import {
   Min,
 } from 'class-validator';
 
+export enum ProductStatus {
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
+  ALL = 'all',
+}
+
 export class QueryProductDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsEnum(ProductStatus)
+  status: ProductStatus = ProductStatus.ACTIVE;
 
   @Transform(({ value }) => {
     if (value === undefined || value === null) return undefined;
