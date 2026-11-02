@@ -90,7 +90,7 @@ export class ProductsService {
 
     return this.prisma.product.findMany({
       where,
-      select: { id: true, name: true, archivedAt: true },
+      select: { id: true, name: true, sku: true, archivedAt: true },
       orderBy: { name: 'asc' },
     });
   }

@@ -1,5 +1,5 @@
 import { SelectComp } from "@/components/shared/select-comp/SelectComp";
-import { useGetProducts } from "../../hooks/useGetProducts";
+import { useGetProductOptions } from "../../hooks/useGetProductOptions";
 
 interface ProductSelectProps {
   value?: string;
@@ -12,10 +12,10 @@ export const ProductSelect = ({
   onChange,
   disabled,
 }: ProductSelectProps) => {
-  const { data: response, isPending } = useGetProducts();
+  const { data: options, isPending } = useGetProductOptions("active");
 
   const items =
-    response?.data.map((product) => ({
+    options?.map((product) => ({
       value: product.id,
       label: `${product.name} (${product.sku})`,
     })) ?? [];
